@@ -2,9 +2,11 @@ import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/presentation/add_to_cart/add_to_cart_controller.dart';
 import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_controller.dart';
+import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:hugeicons/styles/stroke_rounded.dart';
 
@@ -43,6 +45,8 @@ class BuyBottomBar extends ConsumerWidget {
                         ref
                             .read(addToCartControllerProvider.notifier)
                             .addItem(product.id, selectedVariation.id);
+
+                        context.goNamed(AppRoute.cart.name);
                       }
                     : null,
                 style: ElevatedButton.styleFrom(

@@ -17,21 +17,21 @@ class CartService {
   final Ref ref;
 
   Future<Cart> _fetchCart() {
-    final user = ref.watch(authRepositoryProvider).currentUser;
+    final user = ref.read(authRepositoryProvider).currentUser;
 
     if (user != null) {
       final cart = ref.read(remoteCartRepositoryProvider).fetchCart(user.uid);
 
       return cart;
     } else {
-      final cart = ref.watch(localCartRepositoryProvider).fetchCart();
+      final cart = ref.read(localCartRepositoryProvider).fetchCart();
 
       return cart;
     }
   }
 
   Future<void> _setCart(Cart cart) async {
-    final user = ref.watch(authRepositoryProvider).currentUser;
+    final user = ref.read(authRepositoryProvider).currentUser;
 
     if (user != null) {
       await ref.read(remoteCartRepositoryProvider).setCart(user.uid, cart);

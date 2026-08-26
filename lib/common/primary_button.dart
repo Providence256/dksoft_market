@@ -1,3 +1,4 @@
+import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +18,10 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: Sizes.p48,
+      width: double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
+        style: ElevatedButton.styleFrom(backgroundColor: AppColors.secondary),
         child: isLoading
             ? CircularProgressIndicator()
             : Text(

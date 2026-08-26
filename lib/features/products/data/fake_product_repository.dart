@@ -41,7 +41,7 @@ class FakeProductRepository {
     String productId,
     String variationId,
   ) {
-    return watchProductsList().map(
+    return watchAllproducts().map(
       (products) => _getProductVariation(products, productId, variationId),
     );
   }

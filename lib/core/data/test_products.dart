@@ -148,20 +148,20 @@ const kTestProducts = [
         attributeValues: {'Taille': '42'},
       ),
       ProductVariation(
-        id: '2',
+        id: '3',
         price: 120,
         stock: 2,
         attributeValues: {'Taille': '43'},
       ),
 
       ProductVariation(
-        id: '2',
+        id: '4',
         price: 120,
         stock: 4,
         attributeValues: {'Taille': '45'},
       ),
       ProductVariation(
-        id: '2',
+        id: '5',
         price: 120,
         stock: 0,
         attributeValues: {'Taille': '46'},
