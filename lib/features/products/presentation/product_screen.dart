@@ -1,0 +1,130 @@
+import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/custom_divider.dart';
+import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/buy_bottom_bar.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/delivery_section.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/marchand_card.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/product_attributes.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/product_description.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/product_price.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/product_quantity.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/product_sliver_app_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class ProductScreen extends ConsumerStatefulWidget {
+  const ProductScreen({super.key, required this.productId});
+
+  final String productId;
+
+  @override
+  ConsumerState<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends ConsumerState<ProductScreen> {
+  bool _scrolled = false;
+
+  final PageController _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final productValue = ref.watch(watchProductProvider(widget.productId));
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification.metrics.axis == Axis.vertical) {
+          final scrolled = notification.metrics.pixels > 150;
+          // Avoid calling setState on every scroll delta, only on flips.
+          if (scrolled != _scrolled) {
+            setState(() => _scrolled = scrolled);
+          }
+        }
+        return false;
+      },
+      child: Scaffold(
+        body: AsyncValueWidget(
+          value: productValue,
+          data: (product) => product == null
+              ? const Center(child: Text('No data found'))
+              : Stack(
+                  children: [
+                    CustomScrollView(
+                      slivers: [
+                        // SliverAppBar
+                        ProductSliverAppBar(
+                          scrolled: _scrolled,
+                          product: product,
+                        ),
+
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 10,
+                              children: [
+                                // product title
+                                AnimatedOpacity(
+                                  opacity: _scrolled ? 0.0 : 1.0,
+                                  duration: const Duration(milliseconds: 250),
+                                  child: Text(
+                                    product.name,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.headlineLarge,
+                                  ),
+                                ),
+                                //Product Price
+                                ProductPrice(product: product),
+                                CustomDivider(),
+                                ProductAttributes(product: product),
+                                ProductQuantity(product: product),
+                                CustomDivider(),
+                                ProductDescription(product: product),
+                                CustomDivider(),
+                                MarchandCard(
+                                  name: 'King - Manya',
+                                  rating: 4.2,
+                                  salesCount: 2140,
+                                  verified: true,
+                                  onTap: () {},
+                                ),
+                                CustomDivider(),
+                                DeliverySection(
+                                  fromAddress: 'Limeté',
+                                  toAddress: 'Lemba',
+                                  estimatedTime: '1hr',
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Reserves space so the last content isn't hidden
+                        // behind the sticky buy bar.
+                        const SliverToBoxAdapter(child: SizedBox(height: 110)),
+                      ],
+                    ),
+
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: BuyBottomBar(product: product),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
