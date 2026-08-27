@@ -1,5 +1,6 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
+import 'package:dksoft_market/features/marchant/data/fake_marchant_repository.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/buy_bottom_bar.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/delivery_section.dart';
@@ -50,79 +51,83 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
       child: Scaffold(
         body: AsyncValueWidget(
           value: productValue,
-          data: (product) => product == null
-              ? const Center(child: Text('No data found'))
-              : Stack(
-                  children: [
-                    CustomScrollView(
-                      slivers: [
-                        // SliverAppBar
-                        ProductSliverAppBar(
-                          scrolled: _scrolled,
-                          product: product,
-                        ),
+          data: (product) {
+            if (product == null) {
+              return const Center(child: Text('No data found'));
+            }
 
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 10,
-                              children: [
-                                // product title
-                                AnimatedOpacity(
-                                  opacity: _scrolled ? 0.0 : 1.0,
-                                  duration: const Duration(milliseconds: 250),
-                                  child: Text(
-                                    product.name,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.headlineLarge,
-                                  ),
-                                ),
-                                //Product Price
-                                ProductPrice(product: product),
-                                CustomDivider(),
-                                ProductAttributes(product: product),
-                                ProductQuantity(product: product),
-                                CustomDivider(),
-                                ProductDescription(product: product),
-                                CustomDivider(),
-                                MarchandCard(
-                                  name: 'King - Manya',
-                                  rating: 4.2,
-                                  salesCount: 2140,
-                                  verified: true,
-                                  onTap: () {},
-                                ),
-                                CustomDivider(),
-                                DeliverySection(
-                                  fromAddress: 'Limeté',
-                                  toAddress: 'Lemba',
-                                  estimatedTime: '1hr',
-                                ),
-                                const SizedBox(height: 8),
-                              ],
-                            ),
-                          ),
-                        ),
+            final merchant = ref.watch(
+              merchantByIdProvider(product.marchandId),
+            );
 
-                        // Reserves space so the last content isn't hidden
-                        // behind the sticky buy bar.
-                        const SliverToBoxAdapter(child: SizedBox(height: 110)),
-                      ],
+            return Stack(
+              children: [
+                CustomScrollView(
+                  slivers: [
+                    // SliverAppBar
+                    ProductSliverAppBar(scrolled: _scrolled, product: product),
+
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 10,
+                          children: [
+                            // product title
+                            AnimatedOpacity(
+                              opacity: _scrolled ? 0.0 : 1.0,
+                              duration: const Duration(milliseconds: 250),
+                              child: Text(
+                                product.name,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineLarge,
+                              ),
+                            ),
+                            //Product Price
+                            ProductPrice(product: product),
+                            CustomDivider(),
+                            ProductAttributes(product: product),
+                            ProductQuantity(product: product),
+                            CustomDivider(),
+                            ProductDescription(product: product),
+                            CustomDivider(),
+                            MarchandCard(
+                              name: merchant.name,
+                              avatarUrl: merchant.avatarUrl,
+                              rating: merchant.rating,
+                              salesCount: merchant.salesCount,
+                              verified: merchant.verified,
+                              onTap: () {},
+                            ),
+                            CustomDivider(),
+                            DeliverySection(
+                              fromAddress: 'Limeté',
+                              toAddress: 'Lemba',
+                              estimatedTime: '1hr',
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
                     ),
 
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: BuyBottomBar(product: product),
-                    ),
+                    // Reserves space so the last content isn't hidden
+                    // behind the sticky buy bar.
+                    const SliverToBoxAdapter(child: SizedBox(height: 110)),
                   ],
                 ),
+
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: BuyBottomBar(product: product),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

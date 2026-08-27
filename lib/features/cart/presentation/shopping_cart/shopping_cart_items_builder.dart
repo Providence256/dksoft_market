@@ -1,5 +1,7 @@
 import 'package:dksoft_market/common/responsive_center.dart';
+import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
+import 'package:dksoft_market/features/cart/presentation/shopping_cart/vendor_group_header.dart';
 import 'package:dksoft_market/features/cart/presentation/widgets/cart_total_with_cta.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:dksoft_market/utils/constants/breakpoint.dart';
@@ -8,18 +10,37 @@ import 'package:flutter/material.dart';
 class ShoppingCartItemsBuilder extends StatelessWidget {
   const ShoppingCartItemsBuilder({
     super.key,
-    required this.items,
+    required this.groups,
     required this.itemBuilder,
     required this.ctaBuilder,
   });
 
-  final List<Item> items;
+  final List<VendorCartGroup> groups;
   final Widget Function(BuildContext, Item, int) itemBuilder;
   final WidgetBuilder ctaBuilder;
+
+  /// Flattens the vendor groups into a single widget list: a header for
+  /// each vendor followed by that vendor's item rows.
+  List<Widget> _buildSections(BuildContext context) {
+    final widgets = <Widget>[];
+    var index = 0;
+
+    for (final group in groups) {
+      widgets.add(VendorGroupHeader(group: group));
+
+      for (final item in group.items) {
+        widgets.add(itemBuilder(context, item, index));
+        index++;
+      }
+    }
+
+    return widgets;
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
+    final sections = _buildSections(context);
 
     if (screenWidth >= Breakpoint.tablet) {
       return ResponsiveCenter(
@@ -29,11 +50,9 @@ class ShoppingCartItemsBuilder extends StatelessWidget {
           children: [
             Flexible(
               flex: 3,
-              child: ListView.builder(
+              child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                itemBuilder: (context, index) =>
-                    itemBuilder(context, items[index], index),
-                itemCount: items.length,
+                children: sections,
               ),
             ),
             gapW16,
@@ -62,11 +81,9 @@ class ShoppingCartItemsBuilder extends StatelessWidget {
       return Column(
         children: [
           Expanded(
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-              itemBuilder: (context, index) =>
-                  itemBuilder(context, items[index], index),
-              itemCount: items.length,
+              children: sections,
             ),
           ),
           Container(

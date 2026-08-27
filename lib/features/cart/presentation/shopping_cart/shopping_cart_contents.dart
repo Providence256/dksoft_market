@@ -1,14 +1,14 @@
-import 'dart:math';
-
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/responsive_center.dart';
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
+import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/shopping_cart_controller.dart';
 import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/home/domain/product_variation.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_variation_controller.dart';
+import 'package:dksoft_market/utils/formatters/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -24,6 +24,10 @@ class ShoppingCartContents extends ConsumerWidget {
   final Item item;
   final int itemIndex;
 
+  void _remove(WidgetRef ref) {
+    ref.read(cartServiceProvider).removeItem(item.productId, item.variationId);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedVariationValue = ref.watch(
@@ -33,14 +37,13 @@ class ShoppingCartContents extends ConsumerWidget {
       )),
     );
     final theme = Theme.of(context);
-    final productPrice = ref.watch(productPriceProvider(item));
+    final unitPrice = ref.watch(productPriceProvider(item));
+    final lineTotal = ref.watch(cartLineTotalProvider(item));
 
     return Dismissible(
-      key: ValueKey('cart_item_${item.productId}_$itemIndex'),
+      key: ValueKey('cart_item_${item.productId}_${item.variationId}'),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) {
-        // ref.read(cartServiceProvider).removeItem(item);
-      },
+      onDismissed: (_) => _remove(ref),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
@@ -104,11 +107,7 @@ class ShoppingCartContents extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        _RemoveButton(
-                          onTap: () {
-                            // ref.read(cartServiceProvider).removeItem(item);
-                          },
-                        ),
+                        _RemoveButton(onTap: () => _remove(ref)),
                       ],
                     ),
                     const SizedBox(height: 3),
@@ -128,24 +127,38 @@ class ShoppingCartContents extends ConsumerWidget {
                     ),
                     const SizedBox(height: 10),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                                  opacity: animation,
-                                  child: child,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (item.quantity > 1)
+                                Text(
+                                  '${CurrencyFormatter.format(unitPrice)} / unité',
+                                  style: theme.textTheme.bodySmall!.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
-                            child: Text(
-                              '$productPrice',
-                              key: const ValueKey('price'),
-                              style: theme.textTheme.titleMedium!.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: theme.colorScheme.primary,
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                transitionBuilder: (child, animation) =>
+                                    FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                child: Text(
+                                  CurrencyFormatter.format(lineTotal),
+                                  key: ValueKey(lineTotal),
+                                  style: theme.textTheme.titleMedium!.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                         QuantityStepper(item: item),
@@ -233,8 +246,11 @@ class QuantityStepper extends ConsumerWidget {
         color: Colors.grey.withValues(alpha: 0.08),
       ),
       child: ItemCartQuantitySelector(
+        // Cap on real remaining stock instead of an arbitrary hardcoded
+        // number, so items with high stock (e.g. groceries) aren't
+        // artificially limited to 10.
         quantity: item.quantity,
-        maxQuantity: min(itemQuantity + item.quantity, 10),
+        maxQuantity: itemQuantity + item.quantity,
         onChanged: (quantity) => ref
             .read(shoppingCartControllerProvider.notifier)
             .updateItemQuantity(item.productId, quantity, item.variationId),

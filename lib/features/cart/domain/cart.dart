@@ -18,7 +18,13 @@ class Cart {
   }
 
   factory Cart.fromMap(Map<String, dynamic> map) {
-    return Cart(Map<String, int>.from((map['items'] as Map<String, int>)));
+    final rawItems = map['items'] as Map? ?? const {};
+
+    final items = rawItems.map<String, int>(
+      (key, value) => MapEntry(key as String, (value as num).toInt()),
+    );
+
+    return Cart(items);
   }
 
   String toJson() => json.encode(toMap());
@@ -41,11 +47,17 @@ class Cart {
 }
 
 extension CartItems on Cart {
+  /// Converts the raw `productId[|variationId] -> quantity` map into a list
+  /// of [Item]s.
+  ///
+  /// Products without variations are stored under a plain `productId` key
+  /// (see [MutableCart._generatekey]), so `variationId` is only present when
+  /// there is a second `|`-separated part.
   List<Item> toItemList() {
     return items.entries.map((entry) {
       final keyParts = entry.key.split('|');
       final productId = keyParts[0];
-      final variationId = keyParts[1];
+      final variationId = keyParts.length > 1 ? keyParts[1] : null;
 
       return Item(
         productId: productId,

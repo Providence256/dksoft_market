@@ -39,4 +39,6 @@ extension MutableCart on Cart {
 
     return Cart(copy);
   }
+
+  Cart clear() => const Cart({});
 }

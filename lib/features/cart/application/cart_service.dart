@@ -10,7 +10,6 @@ import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/home/domain/product_variation.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_variation_controller.dart';
-import 'package:dksoft_market/helpers/pricing_calculator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CartService {
@@ -54,6 +53,17 @@ class CartService {
 
     await _setCart(updated);
   }
+
+  Future<void> removeItem(String productId, String? variationId) async {
+    final cart = await _fetchCart();
+    final updated = cart.removeItemById(productId, variationId);
+
+    await _setCart(updated);
+  }
+
+  Future<void> clearCart() async {
+    await _setCart(const Cart());
+  }
 }
 
 final cartServiceProvider = Provider<CartService>((ref) {
@@ -70,56 +80,18 @@ final cartProvider = StreamProvider<Cart>((ref) {
   }
 });
 
+/// Total number of units in the cart (sum of every line's quantity), used
+/// e.g. to badge the cart icon in the bottom navigation bar.
 final cartItemsCountProvider = Provider<int>((ref) {
   return ref
       .watch(cartProvider)
-      .maybeMap(data: (cart) => cart.value.items.length, orElse: () => 0);
-});
-
-final cartTotalProvider = Provider.autoDispose<double>((ref) {
-  final cart = ref.watch(cartProvider).value ?? Cart();
-  final productList = ref.watch(productsListStreamProvider).value ?? [];
-
-  if (cart.items.isNotEmpty && productList.isNotEmpty) {
-    var total = 0.0;
-    for (final item in cart.items.entries) {
-      final keyParts = item.key.split('|');
-      final productId = keyParts[0];
-      final variationId = keyParts.length > 1 ? keyParts[1] : null;
-
-      final product = productList.firstWhere(
-        (product) => product.id == productId,
+      .maybeMap(
+        data: (cart) => cart.value.items.values.fold<int>(
+          0,
+          (sum, quantity) => sum + quantity,
+        ),
+        orElse: () => 0,
       );
-
-      double itemPrice = 0.0;
-
-      if (variationId != null) {
-        final variation = product.variations.firstWhere(
-          (variation) => variation.id == variationId,
-        );
-        itemPrice = variation.price;
-        if (product.reduction > 0) {
-          itemPrice = PricingCalculator.calculateSellingPrice(
-            itemPrice,
-            product.reduction,
-          );
-        }
-      } else {
-        itemPrice = product.price;
-        if (product.reduction > 0) {
-          itemPrice = PricingCalculator.calculateSellingPrice(
-            product.price,
-            product.reduction,
-          );
-        }
-      }
-
-      total += itemPrice * item.value;
-    }
-    return total;
-  } else {
-    return 0.0;
-  }
 });
 
 final itemAvailableQuantityProvider = Provider.autoDispose

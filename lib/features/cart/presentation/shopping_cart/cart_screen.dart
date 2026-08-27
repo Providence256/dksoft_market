@@ -1,6 +1,7 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/primary_button.dart';
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
+import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/domain/cart.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/shopping_cart_item.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/shopping_cart_items_builder.dart';
@@ -63,29 +64,45 @@ class CartScreen extends ConsumerWidget {
             return const _EmptyCart();
           }
 
+          // Products are ranged by the vendor that sells them, so the
+          // shopper can see at a glance which items ship from which
+          // merchant (see ProductModal.marchandId).
+          final groups = ref.watch(cartVendorGroupsProvider);
+
           return ShoppingCartItemsBuilder(
-            items: items,
+            groups: groups,
             itemBuilder: (_, item, index) =>
                 ShoppingCartItem(item: item, itemIndex: index),
-            ctaBuilder: (_) =>
-                PrimaryButton(text: 'VÉRIFIER', onPressed: () {}),
+            ctaBuilder: (context) => PrimaryButton(
+              text: 'VÉRIFIER',
+              onPressed: () => _startCheckout(context),
+            ),
           );
         },
       ),
     );
   }
 
+  void _startCheckout(BuildContext context) {
+    // TODO: navigate to the real checkout / shipping flow once it exists.
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Le paiement arrive bientôt !')),
+    );
+  }
+
   void _confirmClearCart(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Clear cart?'),
-        content: const Text('This will remove all items from your cart.'),
+        title: const Text('Vider le panier ?'),
+        content: const Text(
+          'Tous les articles seront retirés de votre panier.',
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Annuler'),
           ),
           FilledButton.tonal(
             style: FilledButton.styleFrom(
@@ -93,9 +110,10 @@ class CartScreen extends ConsumerWidget {
               foregroundColor: Colors.red.shade600,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              ref.read(cartServiceProvider).clearCart();
+              Navigator.of(dialogContext).pop();
             },
-            child: const Text('Clear'),
+            child: const Text('Vider'),
           ),
         ],
       ),
@@ -126,14 +144,14 @@ class _EmptyCart extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Your cart is empty',
+            'Votre panier est vide',
             style: Theme.of(
               context,
             ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
-            'Items you add will show up here.',
+            'Les articles que vous ajoutez apparaîtront ici.',
             style: Theme.of(
               context,
             ).textTheme.bodyMedium!.copyWith(color: Colors.grey[500]),
