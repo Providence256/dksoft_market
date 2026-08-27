@@ -82,7 +82,14 @@ final productPriceProvider = Provider.autoDispose.family<double, Item>((
 
   if (product == null) return 0.0;
 
-  final selectedVariation = ref.watch(productVariationProvider(item)).value;
+  final selectedVariation = ref
+      .watch(
+        productVariationProvider((
+          productId: item.productId,
+          variationId: item.variationId,
+        )),
+      )
+      .value;
 
   final hasVariations = product.variations.isNotEmpty;
   final basePrice = hasVariations

@@ -1,13 +1,15 @@
-import 'package:dksoft_market/utils/constants/app_sizes.dart';
+import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartTotalWithCTA extends StatelessWidget {
+class CartTotalWithCTA extends ConsumerWidget {
   const CartTotalWithCTA({super.key, required this.ctaBuilder});
   final WidgetBuilder ctaBuilder;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final cartTotal = ref.watch(cartTotalProvider);
 
     return Row(
       children: [
@@ -24,7 +26,7 @@ class CartTotalWithCTA extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              '\$2000.00',
+              '$cartTotal',
               style: theme.textTheme.titleLarge!.copyWith(
                 fontWeight: FontWeight.w800,
                 color: theme.colorScheme.primary,

@@ -10,6 +10,7 @@ import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/home/domain/product_variation.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_variation_controller.dart';
+import 'package:dksoft_market/helpers/pricing_calculator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CartService {
@@ -75,6 +76,52 @@ final cartItemsCountProvider = Provider<int>((ref) {
       .maybeMap(data: (cart) => cart.value.items.length, orElse: () => 0);
 });
 
+final cartTotalProvider = Provider.autoDispose<double>((ref) {
+  final cart = ref.watch(cartProvider).value ?? Cart();
+  final productList = ref.watch(productsListStreamProvider).value ?? [];
+
+  if (cart.items.isNotEmpty && productList.isNotEmpty) {
+    var total = 0.0;
+    for (final item in cart.items.entries) {
+      final keyParts = item.key.split('|');
+      final productId = keyParts[0];
+      final variationId = keyParts.length > 1 ? keyParts[1] : null;
+
+      final product = productList.firstWhere(
+        (product) => product.id == productId,
+      );
+
+      double itemPrice = 0.0;
+
+      if (variationId != null) {
+        final variation = product.variations.firstWhere(
+          (variation) => variation.id == variationId,
+        );
+        itemPrice = variation.price;
+        if (product.reduction > 0) {
+          itemPrice = PricingCalculator.calculateSellingPrice(
+            itemPrice,
+            product.reduction,
+          );
+        }
+      } else {
+        itemPrice = product.price;
+        if (product.reduction > 0) {
+          itemPrice = PricingCalculator.calculateSellingPrice(
+            product.price,
+            product.reduction,
+          );
+        }
+      }
+
+      total += itemPrice * item.value;
+    }
+    return total;
+  } else {
+    return 0.0;
+  }
+});
+
 final itemAvailableQuantityProvider = Provider.autoDispose
     .family<int, ProductModal>((ref, product) {
       final cart = ref.watch(cartProvider).value;
@@ -105,10 +152,8 @@ final itemAvailableQuantityProvider = Provider.autoDispose
         } else {
           finalQuantity = max(0, product.stock - quantityInCart);
         }
-        print('final quantity $finalQuantity');
         return finalQuantity;
       } else {
-        print('final stock ${product.stock}');
         return product.stock;
       }
     });

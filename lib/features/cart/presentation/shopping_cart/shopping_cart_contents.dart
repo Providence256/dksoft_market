@@ -26,7 +26,12 @@ class ShoppingCartContents extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedVariationValue = ref.watch(productVariationProvider(item));
+    final selectedVariationValue = ref.watch(
+      productVariationProvider((
+        productId: item.productId,
+        variationId: item.variationId,
+      )),
+    );
     final theme = Theme.of(context);
     final productPrice = ref.watch(productPriceProvider(item));
 
