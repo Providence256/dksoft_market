@@ -47,21 +47,22 @@ class Cart {
 }
 
 extension CartItems on Cart {
-  /// Converts the raw `productId[|variationId] -> quantity` map into a list
-  /// of [Item]s.
-  ///
-  /// Products without variations are stored under a plain `productId` key
-  /// (see [MutableCart._generatekey]), so `variationId` is only present when
-  /// there is a second `|`-separated part.
+  /// Convertit la map brute `productId|variationId|dealerId -> quantité` en
+  /// liste d'[Item]s. `variationId` peut être vide (produit sans variation),
+  /// mais `dealerId` est toujours présent : voir [MutableCart._generatekey].
   List<Item> toItemList() {
     return items.entries.map((entry) {
       final keyParts = entry.key.split('|');
       final productId = keyParts[0];
-      final variationId = keyParts.length > 1 ? keyParts[1] : null;
+      final variationId = (keyParts.length > 1 && keyParts[1].isNotEmpty)
+          ? keyParts[1]
+          : null;
+      final dealerId = keyParts.length > 2 ? keyParts[2] : '';
 
       return Item(
         productId: productId,
         quantity: entry.value,
+        dealerId: dealerId,
         variationId: variationId,
       );
     }).toList();

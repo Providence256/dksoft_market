@@ -23,6 +23,7 @@ dependencies:
   riverpod_annotation: ^4.0.3
   rxdart: ^0.28.0
   smooth_page_indicator: ^2.0.1
+  toastification: ^3.2.0
 
 dev_dependencies:
   flutter_test:

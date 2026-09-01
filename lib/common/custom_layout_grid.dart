@@ -48,7 +48,7 @@ class CustomHorizontalList extends StatelessWidget {
     this.minItemWidth = 250,
     this.maxColumns = 6,
     this.imageAspectRatio = 4 / 3,
-    this.footerHeight = 56, // space reserved for name + price text
+    this.footerHeight = 75,
     this.height,
   });
 

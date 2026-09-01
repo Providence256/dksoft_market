@@ -1,6 +1,10 @@
 import 'package:dksoft_market/application_screen.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
+import 'package:dksoft_market/features/authentication/presentation/signup_screen.dart';
 import 'package:dksoft_market/features/booking/booking_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
+import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_screen.dart';
 import 'package:dksoft_market/features/category/categories_screen.dart';
 import 'package:dksoft_market/features/home/home_screen.dart';
 import 'package:dksoft_market/features/onboarding/onboarding_screen.dart';
@@ -17,21 +21,54 @@ enum AppRoute {
   product,
   categories,
   cart,
-  booking,
+  dealerCart,
+  bookings,
   profile,
+  login,
+  signup,
 }
+
+const _protectedPaths = ['/profile', '/bookings'];
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
+  final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
     initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
+    redirect: (context, state) {
+      final isLoggedIn = authRepository.currentUser != null;
+      final path = state.matchedLocation;
+      final isAuthRoute = path == '/login' || path == 'signup';
+      final isProtectedRoute = _protectedPaths.any(
+        (route) => path.startsWith(route),
+      );
+
+      if (!isLoggedIn && isProtectedRoute) {
+        return '/login';
+      }
+
+      if (isLoggedIn && isAuthRoute) {
+        return '/profile';
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/',
         name: AppRoute.onboarding.name,
         builder: (context, state) => OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        name: AppRoute.login.name,
+        builder: (context, state) => LoginScreen(),
+      ),
+      GoRoute(
+        path: '/signup',
+        name: AppRoute.signup.name,
+        builder: (context, state) => SignUpScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -72,6 +109,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: '/cart',
                 name: AppRoute.cart.name,
                 builder: (context, state) => CartScreen(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: '/dealer-cart/:id',
+                    name: AppRoute.dealerCart.name,
+                    pageBuilder: (context, state) {
+                      final dealerId = state.pathParameters['id']!;
+                      return MaterialPage(
+                        fullscreenDialog: true,
+                        child: DealerCartScreen(dealerId: dealerId),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -79,7 +130,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/bookings',
-                name: AppRoute.booking.name,
+                name: AppRoute.bookings.name,
                 builder: (context, state) => BookingScreen(),
               ),
             ],

@@ -2,18 +2,17 @@ import 'package:dksoft_market/features/cart/domain/cart.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
 
 extension MutableCart on Cart {
-  String _generatekey(String productId, String? variationId) {
-    if (variationId == null) {
-      return productId;
-    } else {
-      return '$productId|$variationId';
-    }
+  /// Une ligne de panier est identifiée par produit + variation + dealer :
+  /// le même produit peut apparaître plusieurs fois dans le panier s'il est
+  /// acheté chez des dealers différents (voir Item pour le détail).
+  String _generatekey(String productId, String? variationId, String dealerId) {
+    return '$productId|${variationId ?? ''}|$dealerId';
   }
 
   Cart setItem(Item item) {
     final copy = Map<String, int>.from(items);
 
-    final key = _generatekey(item.productId, item.variationId);
+    final key = _generatekey(item.productId, item.variationId, item.dealerId);
     copy[key] = item.quantity;
 
     return Cart(copy);
@@ -21,7 +20,7 @@ extension MutableCart on Cart {
 
   Cart addItem(Item item) {
     final copy = Map<String, int>.from(items);
-    final key = _generatekey(item.productId, item.variationId);
+    final key = _generatekey(item.productId, item.variationId, item.dealerId);
 
     copy.update(
       key,
@@ -32,9 +31,9 @@ extension MutableCart on Cart {
     return Cart(copy);
   }
 
-  Cart removeItemById(String productId, String? variationId) {
+  Cart removeItemById(String productId, String? variationId, String dealerId) {
     final copy = Map<String, int>.from(items);
-    final key = _generatekey(productId, variationId);
+    final key = _generatekey(productId, variationId, dealerId);
     copy.remove(key);
 
     return Cart(copy);

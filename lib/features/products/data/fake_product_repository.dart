@@ -1,4 +1,5 @@
 import 'package:dksoft_market/core/data/test_products.dart';
+import 'package:dksoft_market/features/cart/domain/item.dart';
 import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/home/domain/product_variation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,13 +80,6 @@ final watchproductsProvider = StreamProvider<List<ProductModal>>((ref) {
 
   return repository.watchProductsList();
 });
-
-final productsListStreamProvider =
-    StreamProvider.autoDispose<List<ProductModal>>((ref) {
-      final repository = ref.watch(fakeProductsRepositoryProvider);
-
-      return repository.watchAllproducts();
-    });
 
 typedef ProductVariationKey = ({String productId, String? variationId});
 

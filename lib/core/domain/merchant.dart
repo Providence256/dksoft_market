@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:dksoft_market/core/domain/pickup_location.dart';
 
 class Merchant {
   const Merchant({
@@ -8,6 +11,7 @@ class Merchant {
     required this.rating,
     required this.salesCount,
     required this.verified,
+    this.pickupLocations = const [],
   });
 
   final String id;
@@ -16,10 +20,18 @@ class Merchant {
   final double rating;
   final int salesCount;
   final bool verified;
+  final List<PickupLocation> pickupLocations;
 
-  /// Fallback used when a product references a `marchandId` that has no
-  /// matching merchant record, so the UI always has something safe to show
-  /// instead of crashing.
+  PickupLocation? get defaultPickupLocation {
+    if (pickupLocations.isEmpty) return null;
+
+    for (final location in pickupLocations) {
+      if (location.isDefault) return location;
+    }
+
+    return pickupLocations.first;
+  }
+
   factory Merchant.unknown(String id) => Merchant(
     id: id,
     name: 'Vendeur',
@@ -35,6 +47,7 @@ class Merchant {
     double? rating,
     int? salesCount,
     bool? verified,
+    List<PickupLocation>? pickupLocations,
   }) {
     return Merchant(
       id: id ?? this.id,
@@ -43,6 +56,7 @@ class Merchant {
       rating: rating ?? this.rating,
       salesCount: salesCount ?? this.salesCount,
       verified: verified ?? this.verified,
+      pickupLocations: pickupLocations ?? this.pickupLocations,
     );
   }
 
@@ -54,6 +68,9 @@ class Merchant {
       'rating': rating,
       'salesCount': salesCount,
       'verified': verified,
+      'pickupLocations': pickupLocations
+          .map((location) => location.toMap())
+          .toList(),
     };
   }
 
@@ -65,6 +82,13 @@ class Merchant {
       rating: (map['rating'] as num).toDouble(),
       salesCount: (map['salesCount'] as num).toInt(),
       verified: map['verified'] as bool? ?? false,
+      pickupLocations: (map['pickupLocations'] as List<dynamic>? ?? [])
+          .map(
+            (location) => PickupLocation.fromMap(
+              Map<String, dynamic>.from(location as Map),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -75,19 +99,25 @@ class Merchant {
 
   @override
   String toString() =>
-      'Merchant(id: $id, name: $name, rating: $rating, '
-      'salesCount: $salesCount, verified: $verified)';
+      'Merchant('
+      'id: $id, '
+      'name: $name, '
+      'rating: $rating, '
+      'salesCount: $salesCount, '
+      'verified: $verified, '
+      'pickupLocations: $pickupLocations'
+      ')';
 
   @override
   bool operator ==(covariant Merchant other) {
     if (identical(this, other)) return true;
-
     return other.id == id &&
         other.name == name &&
         other.avatarUrl == avatarUrl &&
         other.rating == rating &&
         other.salesCount == salesCount &&
-        other.verified == verified;
+        other.verified == verified &&
+        _listEquals(other.pickupLocations, pickupLocations);
   }
 
   @override
@@ -97,6 +127,16 @@ class Merchant {
         avatarUrl.hashCode ^
         rating.hashCode ^
         salesCount.hashCode ^
-        verified.hashCode;
+        verified.hashCode ^
+        Object.hashAll(pickupLocations);
+  }
+
+  static bool _listEquals<T>(List<T> a, List<T> b) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 }

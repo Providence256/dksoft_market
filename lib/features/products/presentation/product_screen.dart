@@ -1,6 +1,7 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
-import 'package:dksoft_market/features/marchant/data/fake_marchant_repository.dart';
+import 'package:dksoft_market/common/fade_slide_in.dart';
+import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/buy_bottom_bar.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/delivery_section.dart';
@@ -86,35 +87,50 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                               ),
                             ),
                             //Product Price
-                            ProductPrice(product: product),
-                            CustomDivider(),
-                            ProductAttributes(product: product),
-                            ProductQuantity(product: product),
-                            CustomDivider(),
-                            ProductDescription(product: product),
-                            CustomDivider(),
-                            MarchandCard(
-                              name: merchant.name,
-                              avatarUrl: merchant.avatarUrl,
-                              rating: merchant.rating,
-                              salesCount: merchant.salesCount,
-                              verified: merchant.verified,
-                              onTap: () {},
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 60),
+                              child: ProductPrice(product: product),
                             ),
                             CustomDivider(),
-                            DeliverySection(
-                              fromAddress: 'Limeté',
-                              toAddress: 'Lemba',
-                              estimatedTime: '1hr',
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 120),
+                              child: ProductAttributes(product: product),
+                            ),
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 160),
+                              child: ProductQuantity(product: product),
+                            ),
+                            CustomDivider(),
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 200),
+                              child: ProductDescription(product: product),
+                            ),
+                            CustomDivider(),
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 240),
+                              child: MarchandCard(
+                                name: merchant.name,
+                                avatarUrl: merchant.avatarUrl,
+                                rating: merchant.rating,
+                                salesCount: merchant.salesCount,
+                                verified: merchant.verified,
+                                onTap: () {},
+                              ),
+                            ),
+                            CustomDivider(),
+                            FadeSlideIn(
+                              delay: Duration(milliseconds: 280),
+                              child: DeliverySection(
+                                fromAddress: 'Limeté',
+                                toAddress: 'Lemba',
+                                estimatedTime: '1hr',
+                              ),
                             ),
                             const SizedBox(height: 8),
                           ],
                         ),
                       ),
                     ),
-
-                    // Reserves space so the last content isn't hidden
-                    // behind the sticky buy bar.
                     const SliverToBoxAdapter(child: SizedBox(height: 110)),
                   ],
                 ),

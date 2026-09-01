@@ -54,9 +54,13 @@ class CartService {
     await _setCart(updated);
   }
 
-  Future<void> removeItem(String productId, String? variationId) async {
+  Future<void> removeItem(
+    String productId,
+    String? variationId,
+    String dealerId,
+  ) async {
     final cart = await _fetchCart();
-    final updated = cart.removeItemById(productId, variationId);
+    final updated = cart.removeItemById(productId, variationId, dealerId);
 
     await _setCart(updated);
   }
@@ -107,7 +111,9 @@ final itemAvailableQuantityProvider = Provider.autoDispose
         cart.items.forEach((key, quantity) {
           final keyParts = key.split('|');
           final productId = keyParts[0];
-          final variationId = keyParts.length > 1 ? keyParts[1] : null;
+          final variationId = (keyParts.length > 1 && keyParts[1].isNotEmpty)
+              ? keyParts[1]
+              : null;
 
           if (productId == product.id) {
             if (variationId != null && selectedVariation.id == variationId) {
@@ -156,7 +162,9 @@ final cartAvailableQuantityProvider = Provider.autoDispose.family<int, Item>((
     final keyParts = entry.key.split('|');
 
     final productId = keyParts[0];
-    final variationId = keyParts.length > 1 ? keyParts[1] : null;
+    final variationId = (keyParts.length > 1 && keyParts[1].isNotEmpty)
+        ? keyParts[1]
+        : null;
 
     if (productId == item.productId && variationId == item.variationId) {
       return sum + entry.value;
