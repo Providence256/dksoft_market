@@ -1,22 +1,31 @@
+import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/features/category/data/category_repository.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CategoryFilterTab extends StatelessWidget {
+class CategoryFilterTab extends ConsumerWidget {
   const CategoryFilterTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoryListValue = ref.watch(categoriesListProvider);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        spacing: Sizes.p8,
-        children: [
-          CategoryTab(label: 'Téléphones'),
-          CategoryTab(label: 'Modes'),
-          CategoryTab(label: 'Ordinateurs'),
-          CategoryTab(label: 'Alimentations'),
-        ],
+      child: AsyncValueWidget(
+        value: categoryListValue,
+        data: (categories) => categories.isEmpty
+            ? Center(child: Text('Categories is empty'))
+            : Row(
+                spacing: Sizes.p8,
+                children: [
+                  CategoryTab(label: 'Téléphones'),
+                  CategoryTab(label: 'Modes'),
+                  CategoryTab(label: 'Ordinateurs'),
+                  CategoryTab(label: 'Alimentations'),
+                ],
+              ),
       ),
     );
   }

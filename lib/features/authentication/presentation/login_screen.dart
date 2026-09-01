@@ -21,7 +21,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
-  bool _stayLoggedIn = true;
 
   @override
   void dispose() {
@@ -215,7 +214,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             onPressed: () => setState(() {
                               _obscurePassword = !_obscurePassword;
                             }),
-
                             icon: HugeIcon(
                               color: AppColors.primary,
                               icon: _obscurePassword
@@ -236,23 +234,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            InkWell(
-                              onTap: () => setState(
-                                () => _stayLoggedIn = !_stayLoggedIn,
-                              ),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: _stayLoggedIn,
-                                    onChanged: (value) => setState(
-                                      () => _stayLoggedIn = value ?? true,
-                                    ),
-                                    activeColor: AppColors.primary,
-                                  ),
-                                  const Text('Rester connecté'),
-                                ],
-                              ),
-                            ),
+                            SizedBox.shrink(),
                             TextButton(
                               onPressed: () {},
                               child: Text(

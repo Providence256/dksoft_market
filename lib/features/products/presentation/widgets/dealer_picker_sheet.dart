@@ -173,23 +173,20 @@ class _DealerOfferTile extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          disabled ? 'En attente de validation' : dealer.zone,
+                          dealer.zone,
                           style: theme.textTheme.bodySmall!.copyWith(
-                            color: disabled
-                                ? Colors.red.shade600
-                                : Colors.grey[600],
+                            color: Colors.grey[600],
+                            fontSize: 12,
                           ),
                         ),
                         SizedBox(width: 5),
-                        Icon(Icons.star, color: AppColors.secondary, size: 14),
+                        Icon(Icons.star, color: AppColors.secondary, size: 12),
+
                         Text(
-                          disabled
-                              ? 'En attente de validation'
-                              : dealer.rating.toStringAsFixed(1),
+                          dealer.rating.toStringAsFixed(1),
                           style: theme.textTheme.bodySmall!.copyWith(
-                            color: disabled
-                                ? Colors.red.shade600
-                                : Colors.grey[600],
+                            color: Colors.grey[600],
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -211,7 +208,7 @@ class _DealerOfferTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '+${margePourcentage.toStringAsFixed(0)}% · +${CurrencyFormatter.format(margeMontant)}',
+                    '+${margePourcentage.toStringAsFixed(0)}%',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: Colors.green.shade700,
                       fontWeight: FontWeight.w600,
