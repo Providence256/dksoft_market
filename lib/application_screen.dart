@@ -51,10 +51,8 @@ class ApplicationScreen extends ConsumerWidget {
             ),
 
             NavigationDestination(
-              icon: HugeIcon(icon: HugeIcons.strokeRoundedDashboardSquare01),
-              selectedIcon: HugeIcon(
-                icon: HugeIcons.strokeRoundedDashboardSquare01,
-              ),
+              icon: HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
+              selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
               label: 'Favoris',
             ),
             NavigationDestination(

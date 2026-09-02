@@ -19,9 +19,12 @@ dependencies:
   go_router: ^17.5.0
   hugeicons: ^1.1.7
   intl: ^0.20.3
+  path_provider: ^2.1.6
   riverpod: ^3.3.2
   riverpod_annotation: ^4.0.3
   rxdart: ^0.28.0
+  sembast: ^3.8.9+1
+  sembast_web: ^2.4.5+1
   smooth_page_indicator: ^2.0.1
   toastification: ^3.2.0
 
@@ -38,6 +41,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/products/
+    - assets/images/categories/
 
   fonts:
     - family: Poppins

@@ -32,6 +32,11 @@ class _ProductsCardState extends ConsumerState<ProductsCard> {
       merchantdefaultPickupLocationProvider(product.marchandId),
     );
 
+    final hasReduction = product.reduction > 0;
+    final discountedPrice = hasReduction
+        ? product.price * (1 - product.reduction / 100)
+        : product.price;
+
     return GestureDetector(
       onTapDown: (_) => _setPressed(true),
       onTapUp: (_) => _setPressed(false),
@@ -49,33 +54,63 @@ class _ProductsCardState extends ConsumerState<ProductsCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(Sizes.p20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(_pressed ? 0.02 : 0.06),
+                  blurRadius: _pressed ? 6 : 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Stack(
-                  children: [
-                    ProductImageContainer(imageUrl: product.images[0]),
-                    if (product.reduction > 0)
-                      Positioned(
-                        top: 12,
-                        left: Sizes.p16,
-                        child: ReductionContainer(
-                          percentage: product.reduction.toInt(),
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(Sizes.p20),
+                  ),
+                  child: Stack(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: ProductImageContainer(
+                          imageUrl: product.images[0],
                         ),
                       ),
-                    const Positioned(
-                      top: Sizes.p16,
-                      right: Sizes.p16,
-                      child: HeartIconContainer(),
-                    ),
-                  ],
+                      if (hasReduction)
+                        Positioned(
+                          top: 12,
+                          left: Sizes.p12,
+                          child: ReductionContainer(
+                            percentage: product.reduction.toInt(),
+                          ),
+                        ),
+                      Positioned(
+                        top: Sizes.p12,
+                        right: Sizes.p12,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.9),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
+                          child: HeartIconContainer(product: product),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
                     Sizes.p12,
-                    Sizes.p8,
+                    Sizes.p12,
                     Sizes.p12,
                     Sizes.p12,
                   ),
@@ -84,23 +119,59 @@ class _ProductsCardState extends ConsumerState<ProductsCard> {
                     children: [
                       Text(
                         product.name,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      Text(
-                        '\$${product.price}',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primary,
+                      const SizedBox(height: 4),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            '\$${discountedPrice.toStringAsFixed(2)}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                          if (hasReduction) ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              '\$${product.price.toStringAsFixed(2)}',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: AppColors.textHintLight,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      if (pickupLocation != null) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 12,
+                              color: AppColors.secondary,
+                            ),
+                            const SizedBox(width: 2),
+                            Expanded(
+                              child: Text(
+                                pickupLocation.commune,
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(color: AppColors.textHintLight),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        pickupLocation!.commune,
-                        style: Theme.of(context).textTheme.labelMedium!
-                            .copyWith(color: AppColors.textHintLight),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
+                      ],
                     ],
                   ),
                 ),

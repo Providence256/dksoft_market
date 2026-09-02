@@ -5,10 +5,12 @@ import 'package:dksoft_market/features/home/widgets/discount_widget.dart';
 import 'package:dksoft_market/features/home/widgets/home_annonce.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_grid.dart';
+import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -30,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
           },
           child: CustomScrollView(
             slivers: [
-              ResponsiveSliverCenter(
+              ResponsiveSliderCenter(
                 padding: const EdgeInsets.all(13),
                 child: FadeSlideIn(
                   child: ClipRRect(
@@ -39,23 +41,27 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              ResponsiveSliverCenter(
+              ResponsiveSliderCenter(
                 padding: const EdgeInsets.symmetric(
                   vertical: Sizes.p8,
                   horizontal: Sizes.p16,
                 ),
                 child: FadeSlideIn(
                   delay: const Duration(milliseconds: 80),
-                  child: const Column(
+                  child: Column(
                     spacing: 10,
                     children: [
-                      HeaderText(text: 'Categories', subtitle: 'Tout voir'),
-                      CategoryFilterTab(),
+                      HeaderText(
+                        text: 'Categories',
+                        subtitle: 'Tout voir',
+                        onTap: () => context.goNamed(AppRoute.categories.name),
+                      ),
+                      const CategoryFilterTab(),
                     ],
                   ),
                 ),
               ),
-              ResponsiveSliverCenter(
+              ResponsiveSliderCenter(
                 padding: const EdgeInsets.symmetric(
                   vertical: Sizes.p8,
                   horizontal: Sizes.p16,
@@ -65,7 +71,7 @@ class HomeScreen extends ConsumerWidget {
                   child: const DiscountWidget(),
                 ),
               ),
-              ResponsiveSliverCenter(
+              ResponsiveSliderCenter(
                 padding: const EdgeInsets.symmetric(
                   vertical: Sizes.p8,
                   horizontal: Sizes.p16,
@@ -91,10 +97,16 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class HeaderText extends StatelessWidget {
-  const HeaderText({super.key, required this.text, required this.subtitle});
+  const HeaderText({
+    super.key,
+    required this.text,
+    required this.subtitle,
+    this.onTap,
+  });
 
   final String text;
   final String subtitle;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -104,7 +116,7 @@ class HeaderText extends StatelessWidget {
         Text(text, style: theme.textTheme.headlineSmall),
         InkWell(
           borderRadius: BorderRadius.circular(Sizes.p8),
-          onTap: () {},
+          onTap: onTap ?? () {},
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Row(
@@ -115,6 +127,9 @@ class HeaderText extends StatelessWidget {
                   style: theme.textTheme.bodySmall!.copyWith(
                     color: theme.colorScheme.secondary,
                     fontSize: 12,
+                    decoration: TextDecoration.underline,
+                    decorationColor: theme.colorScheme.secondary,
+                    decorationThickness: 2,
                   ),
                 ),
                 const SizedBox(width: 2),
@@ -142,7 +157,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       automaticallyImplyLeading: false,
-      toolbarHeight: 150,
+      toolbarHeight: 110,
       elevation: 0,
       titleSpacing: 0,
       shape: const RoundedRectangleBorder(
@@ -300,7 +315,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(150);
+  Size get preferredSize => const Size.fromHeight(130);
 }
 
 /// A small badge that gently pulses to draw the eye toward new

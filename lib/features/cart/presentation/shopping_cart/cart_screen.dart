@@ -1,5 +1,6 @@
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_card.dart';
+import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,10 +16,12 @@ class CartScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Tous les paniers',
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall!.copyWith(color: AppColors.primary),
         ),
         centerTitle: false,
-        elevation: 0,
+        elevation: 2,
         scrolledUnderElevation: 0.5,
       ),
       body: groups.isEmpty

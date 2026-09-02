@@ -155,7 +155,7 @@ class _ProductSliverAppBarState extends State<ProductSliverAppBar> {
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 12,
                   right: 16,
-                  child: const HeartIconContainer(),
+                  child: HeartIconContainer(product: widget.product),
                 ),
               if (!widget.scrolled)
                 Positioned(

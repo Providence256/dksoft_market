@@ -6,6 +6,9 @@ import 'package:dksoft_market/features/booking/booking_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_screen.dart';
 import 'package:dksoft_market/features/category/categories_screen.dart';
+import 'package:dksoft_market/features/category/presentation/sub_categories_screen.dart';
+import 'package:dksoft_market/features/category/presentation/sub_category_products_screen.dart';
+import 'package:dksoft_market/features/wishlist/presentation/wishlist_screen.dart';
 import 'package:dksoft_market/features/home/home_screen.dart';
 import 'package:dksoft_market/features/onboarding/onboarding_screen.dart';
 import 'package:dksoft_market/features/products/presentation/product_screen.dart';
@@ -19,7 +22,10 @@ enum AppRoute {
   application,
   home,
   product,
+  favoris,
   categories,
+  subCategories,
+  subCategoryProducts,
   cart,
   dealerCart,
   bookings,
@@ -90,6 +96,42 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       return ProductScreen(productId: productId);
                     },
                   ),
+
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: '/categories',
+                    name: AppRoute.categories.name,
+                    builder: (context, state) => CategoriesScreen(),
+                    routes: [
+                      GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
+                        path: ':categoryId',
+                        name: AppRoute.subCategories.name,
+                        builder: (context, state) {
+                          final categoryId =
+                              state.pathParameters['categoryId']!;
+                          return SubCategoriesScreen(categoryId: categoryId);
+                        },
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: _rootNavigatorKey,
+                            path: ':subCategoryId',
+                            name: AppRoute.subCategoryProducts.name,
+                            builder: (context, state) {
+                              final categoryId =
+                                  state.pathParameters['categoryId']!;
+                              final subCategoryId =
+                                  state.pathParameters['subCategoryId']!;
+                              return SubCategoryProductsScreen(
+                                categoryId: categoryId,
+                                subCategoryId: subCategoryId,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -97,9 +139,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/categories',
-                name: AppRoute.categories.name,
-                builder: (context, state) => CategoriesScreen(),
+                path: '/favoris',
+                name: AppRoute.favoris.name,
+                builder: (context, state) => WishListScreen(),
+                routes: [],
               ),
             ],
           ),

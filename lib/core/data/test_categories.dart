@@ -5,7 +5,7 @@ const kTestCategory = [
   CategoryModal(
     id: '1',
     name: 'Électronique',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/electronic.png',
     subCategory: [
       SubCategory(id: '1-1', name: 'Téléphones portables'),
       SubCategory(id: '1-2', name: 'Ordinateurs portables et de bureau'),
@@ -20,7 +20,7 @@ const kTestCategory = [
   CategoryModal(
     id: '2',
     name: 'Mode',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/mode.png',
     subCategory: [
       SubCategory(id: '2-1', name: 'Vêtements pour hommes'),
       SubCategory(id: '2-2', name: 'Vêtements pour femmes'),
@@ -35,7 +35,7 @@ const kTestCategory = [
   CategoryModal(
     id: '3',
     name: 'Maison et cuisine',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/cuisine.png',
     subCategory: [
       SubCategory(id: '3-1', name: 'Meubles'),
       SubCategory(id: '3-2', name: 'Cuisine et salle à manger'),
@@ -50,7 +50,7 @@ const kTestCategory = [
   CategoryModal(
     id: '4',
     name: 'Beauté et soins personnels',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/beauty.png',
     subCategory: [
       SubCategory(id: '4-1', name: 'Soins de la peau'),
       SubCategory(id: '4-2', name: 'Soins capillaires'),
@@ -65,7 +65,7 @@ const kTestCategory = [
   CategoryModal(
     id: '5',
     name: 'Santé et bien-être',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/sante.png',
     subCategory: [
       SubCategory(id: '5-1', name: 'Équipements de fitness'),
       SubCategory(id: '5-2', name: 'Vitamines et compléments'),
@@ -79,7 +79,7 @@ const kTestCategory = [
   CategoryModal(
     id: '6',
     name: 'Alimentation et épicerie',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/grocery.png',
     subCategory: [
       SubCategory(id: '6-1', name: 'Produits frais'),
       SubCategory(id: '6-2', name: 'Fruits et légumes'),
@@ -94,7 +94,7 @@ const kTestCategory = [
   CategoryModal(
     id: '7',
     name: 'Bébé et enfants',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/enfants.png',
     subCategory: [
       SubCategory(id: '7-1', name: 'Vêtements pour bébé'),
       SubCategory(id: '7-2', name: 'Soins pour bébé'),
@@ -109,7 +109,7 @@ const kTestCategory = [
   CategoryModal(
     id: '8',
     name: 'Sports et plein air',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/sports.png',
     subCategory: [
       SubCategory(id: '8-1', name: 'Fitness et musculation'),
       SubCategory(id: '8-2', name: 'Football'),
@@ -124,7 +124,7 @@ const kTestCategory = [
   CategoryModal(
     id: '9',
     name: 'Automobile et moto',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/automobile.png',
     subCategory: [
       SubCategory(id: '9-1', name: 'Accessoires automobiles'),
       SubCategory(id: '9-2', name: 'Accessoires pour motos'),
@@ -139,7 +139,7 @@ const kTestCategory = [
   CategoryModal(
     id: '10',
     name: 'Livres, bureau et école',
-    imageUrl: 'imageUrl',
+    imageUrl: 'assets/images/categories/livre.png',
     subCategory: [
       SubCategory(id: '10-1', name: 'Livres'),
       SubCategory(id: '10-2', name: 'Papeterie'),

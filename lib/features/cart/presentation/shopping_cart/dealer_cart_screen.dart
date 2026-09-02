@@ -306,7 +306,6 @@ class _PriceBreakdown extends StatelessWidget {
                 _breakdownRow(theme, "Prix de l'article", itemsPrice),
                 const SizedBox(height: 8),
                 _breakdownRow(theme, 'Remise', -discount),
-                _breakdownRow(theme, 'Livraison', discount),
                 const SizedBox(height: 8),
               ],
             ),

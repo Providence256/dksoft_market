@@ -1,7 +1,7 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
-import 'package:dksoft_market/features/category/domain/category_modal.dart';
+import 'package:dksoft_market/features/category/domain/sub_category.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -9,17 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CategoriesScreen extends ConsumerWidget {
-  const CategoriesScreen({super.key});
+class SubCategoriesScreen extends ConsumerWidget {
+  const SubCategoriesScreen({super.key, required this.categoryId});
+
+  final String categoryId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesValue = ref.watch(categoriesListProvider);
+    final categoryValue = ref.watch(categoryProvider(categoryId));
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Categories',
+          categoryValue.value?.name ?? 'Sous categories',
           style: Theme.of(
             context,
           ).textTheme.headlineSmall!.copyWith(color: AppColors.primary),
@@ -29,27 +31,39 @@ class CategoriesScreen extends ConsumerWidget {
         scrolledUnderElevation: 0.5,
       ),
       body: AsyncValueWidget(
-        value: categoriesValue,
-        data: (categories) => categories.isEmpty
-            ? const Center(child: Text('Aucune categorie'))
-            : ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: Sizes.p16),
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => const CustomDivider(),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return _CategoryTile(category: category);
-                },
-              ),
+        value: categoryValue,
+        data: (category) {
+          if (category == null) {
+            return const Center(child: Text('Categorie introuvable'));
+          }
+
+          final subCategories = category.subCategory;
+
+          return subCategories.isEmpty
+              ? const Center(child: Text('Aucune sous categorie'))
+              : ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: Sizes.p16),
+                  itemCount: subCategories.length,
+                  separatorBuilder: (_, __) => CustomDivider(),
+                  itemBuilder: (context, index) {
+                    final subCategory = subCategories[index];
+                    return _SubCategoryTile(
+                      categoryId: categoryId,
+                      subCategory: subCategory,
+                    );
+                  },
+                );
+        },
       ),
     );
   }
 }
 
-class _CategoryTile extends StatelessWidget {
-  const _CategoryTile({required this.category});
+class _SubCategoryTile extends StatelessWidget {
+  const _SubCategoryTile({required this.categoryId, required this.subCategory});
 
-  final CategoryModal category;
+  final String categoryId;
+  final SubCategory subCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -59,19 +73,22 @@ class _CategoryTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(Sizes.p16),
         onTap: () => context.goNamed(
-          AppRoute.subCategories.name,
-          pathParameters: {'categoryId': category.id},
+          AppRoute.subCategoryProducts.name,
+          pathParameters: {
+            'categoryId': categoryId,
+            'subCategoryId': subCategory.id,
+          },
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: Sizes.p8,
             horizontal: Sizes.p12,
+            vertical: Sizes.p8,
           ),
           child: Row(
             children: [
               Expanded(
                 child: Text(
-                  category.name,
+                  subCategory.name,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     fontWeight: FontWeight.normal,
                   ),

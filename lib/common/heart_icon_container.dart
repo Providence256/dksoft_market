@@ -1,21 +1,24 @@
+import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/wishlist/presentation/wishlist_controller.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class HeartIconContainer extends StatefulWidget {
-  const HeartIconContainer({super.key});
+class HeartIconContainer extends ConsumerStatefulWidget {
+  const HeartIconContainer({super.key, required this.product});
+
+  final ProductModal product;
 
   @override
-  State<HeartIconContainer> createState() => _HeartIconContainerState();
+  ConsumerState<HeartIconContainer> createState() => _HeartIconContainerState();
 }
 
-class _HeartIconContainerState extends State<HeartIconContainer>
+class _HeartIconContainerState extends ConsumerState<HeartIconContainer>
     with SingleTickerProviderStateMixin {
-  bool _isFavorite = false;
-
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 260),
@@ -26,10 +29,11 @@ class _HeartIconContainerState extends State<HeartIconContainer>
     end: 1.0,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
-  void _toggle() {
+  void _toggle() async {
     HapticFeedback.lightImpact();
-    setState(() => _isFavorite = !_isFavorite);
-    _controller.forward(from: 0.0);
+    await ref
+        .read(wishlistControllerProvider.notifier)
+        .toggleItem(widget.product.id);
   }
 
   @override
@@ -40,6 +44,9 @@ class _HeartIconContainerState extends State<HeartIconContainer>
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
+    final wishlist = ref.watch(isInWishlistProvider(product.id));
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.85),
@@ -54,10 +61,10 @@ class _HeartIconContainerState extends State<HeartIconContainer>
             transitionBuilder: (child, animation) =>
                 ScaleTransition(scale: animation, child: child),
             child: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              key: ValueKey(_isFavorite),
+              wishlist ? Icons.favorite : Icons.favorite_border,
+              key: ValueKey(wishlist),
               size: Sizes.p32,
-              color: _isFavorite
+              color: wishlist
                   ? AppColors.secondary
                   : AppColors.textSecondaryLight.withValues(alpha: 0.7),
             ),

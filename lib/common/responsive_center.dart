@@ -24,8 +24,8 @@ class ResponsiveCenter extends StatelessWidget {
   }
 }
 
-class ResponsiveSliverCenter extends StatelessWidget {
-  const ResponsiveSliverCenter({
+class ResponsiveSliderCenter extends StatelessWidget {
+  const ResponsiveSliderCenter({
     super.key,
     this.maxContentWidth = Breakpoint.desktop,
     this.padding = EdgeInsets.zero,

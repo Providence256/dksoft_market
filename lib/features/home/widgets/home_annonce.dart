@@ -48,7 +48,7 @@ class _HomeAnnonceContainerState extends State<HomeAnnonceContainer> {
               .toList(),
           options: CarouselOptions(
             autoPlay: true,
-            aspectRatio: 16 / 8,
+            aspectRatio: 14 / 8,
             autoPlayInterval: const Duration(seconds: 4),
             autoPlayAnimationDuration: const Duration(milliseconds: 700),
             autoPlayCurve: Curves.easeInOutCubic,

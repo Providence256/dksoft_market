@@ -17,6 +17,23 @@ class CategoryRepository {
   Stream<List<CategoryModal>> watchCategoriesList() {
     return _categories.stream;
   }
+
+  Stream<CategoryModal?> watchCategory(String id) {
+    return watchCategoriesList().map(
+      (categories) => _getCategory(categories, id),
+    );
+  }
+
+  static CategoryModal? _getCategory(
+    List<CategoryModal> categories,
+    String id,
+  ) {
+    try {
+      return categories.firstWhere((category) => category.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
@@ -30,3 +47,10 @@ final categoriesListProvider = StreamProvider.autoDispose<List<CategoryModal>>((
 
   return repository.watchCategoriesList();
 });
+
+final categoryProvider = StreamProvider.autoDispose
+    .family<CategoryModal?, String>((ref, id) {
+      final repository = ref.watch(categoryRepositoryProvider);
+
+      return repository.watchCategory(id);
+    });

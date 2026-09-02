@@ -1,5 +1,4 @@
 import 'package:dksoft_market/core/data/test_products.dart';
-import 'package:dksoft_market/features/cart/domain/item.dart';
 import 'package:dksoft_market/features/home/domain/product_modal.dart';
 import 'package:dksoft_market/features/home/domain/product_variation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +26,14 @@ class FakeProductRepository {
 
   Stream<ProductModal?> watchProduct(String id) {
     return watchAllproducts().map((products) => _getPproduct(products, id));
+  }
+
+  Stream<List<ProductModal>> watchProductsBySubCategory(
+    String subCategoryId,
+  ) async* {
+    yield _products
+        .where((product) => product.subCategoryId == subCategoryId)
+        .toList();
   }
 
   Stream<List<ProductModal>> watchDiscountProducts() async* {
@@ -90,6 +97,13 @@ final productVariationProvider = StreamProvider.autoDispose
       final repository = ref.watch(fakeProductsRepositoryProvider);
 
       return repository.watchProductVariation(proId, varId!);
+    });
+
+final productsBySubCategoryProvider = StreamProvider.autoDispose
+    .family<List<ProductModal>, String>((ref, subCategoryId) {
+      final repository = ref.watch(fakeProductsRepositoryProvider);
+
+      return repository.watchProductsBySubCategory(subCategoryId);
     });
 
 final discountProductProvider = StreamProvider<List<ProductModal>>((ref) {

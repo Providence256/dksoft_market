@@ -1,3 +1,5 @@
+import 'package:dksoft_market/features/wishlist/data/local/local_wishlist_repository.dart';
+import 'package:dksoft_market/features/wishlist/data/local/sembast_wishlist_repository.dart';
 import 'package:dksoft_market/firebase_options.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/themes/app_theme.dart';
@@ -10,7 +12,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(ProviderScope(child: const MainApp()));
+  final localwishListRepository = await SembastWishlistRepository.makeDefault();
+  runApp(
+    ProviderScope(
+      overrides: [
+        localWishlistRepositoryProvider.overrideWithValue(
+          localwishListRepository,
+        ),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends ConsumerWidget {
