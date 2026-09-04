@@ -1,10 +1,11 @@
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
-import 'package:dksoft_market/features/cart/application/checkout_service.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_line_row.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
+import 'package:dksoft_market/utils/constants/app_sizes.dart';
 import 'package:dksoft_market/utils/formatters/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -375,7 +376,10 @@ class _ConfirmButton extends ConsumerWidget {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
-          onPressed: () => _checkout(context, ref),
+          onPressed: () => context.pushNamed(
+            AppRoute.checkout.name,
+            pathParameters: {'id': group.dealer.id},
+          ),
           icon: HugeIcon(
             icon: HugeIcons.strokeRoundedMotorbike02,
             color: Colors.white,
@@ -390,49 +394,9 @@ class _ConfirmButton extends ConsumerWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
+            padding: const EdgeInsets.symmetric(vertical: Sizes.p16),
           ),
         ),
-      ),
-    );
-  }
-
-  void _checkout(BuildContext context, WidgetRef ref) {
-    final result = CheckoutService().checkout([group], {group: total}).first;
-    final cartService = ref.read(cartServiceProvider);
-
-    if (result.success) {
-      for (final item in group.items) {
-        cartService.removeItem(item.productId, item.variationId, item.dealerId);
-      }
-    }
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          result.success ? 'Commande validée' : 'Provision insuffisante',
-        ),
-        content: Text(
-          result.success
-              ? 'Commande de ${CurrencyFormatter.format(total)} confirmée chez ${group.dealer.name}.'
-              : '${group.dealer.name} ne peut pas encore couvrir cette commande. Réessayez plus tard.',
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              if (result.success && Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              }
-            },
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }

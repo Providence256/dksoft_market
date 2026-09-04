@@ -70,8 +70,8 @@ class AuthTextField extends StatelessWidget {
                   keyboardType: keyboardType,
                   validator: validator,
                   autofillHints: autofillHints,
-                  style: theme.textTheme.titleMedium!.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: theme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
                   decoration: InputDecoration(
                     isDense: true,

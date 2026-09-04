@@ -1,10 +1,11 @@
 import 'package:dksoft_market/application_screen.dart';
-import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
 import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
 import 'package:dksoft_market/features/authentication/presentation/signup_screen.dart';
 import 'package:dksoft_market/features/booking/booking_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_screen.dart';
+import 'package:dksoft_market/features/cart/presentation/checkout/checkout_screen.dart';
 import 'package:dksoft_market/features/category/categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_category_products_screen.dart';
@@ -28,6 +29,7 @@ enum AppRoute {
   subCategoryProducts,
   cart,
   dealerCart,
+  checkout,
   bookings,
   profile,
   login,
@@ -39,7 +41,7 @@ const _protectedPaths = ['/profile', '/bookings'];
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final authRepository = ref.watch(authRepositoryProvider);
+  final authRepository = ref.watch(fakeAuthRepositoryProvider);
   return GoRouter(
     initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
@@ -164,6 +166,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         child: DealerCartScreen(dealerId: dealerId),
                       );
                     },
+                    routes: [
+                      GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
+                        path: 'checkout',
+                        name: AppRoute.checkout.name,
+                        builder: (context, state) {
+                          final dealerId = state.pathParameters['id']!;
+                          return CheckoutScreen(dealerId: dealerId);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

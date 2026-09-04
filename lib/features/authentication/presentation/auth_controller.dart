@@ -1,25 +1,21 @@
-import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
-import 'package:dksoft_market/features/authentication/domain/account_type.dart';
+import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class AuthController extends StateNotifier<AsyncValue<void>> {
   AuthController(this._authRepository) : super(const AsyncData(null));
 
-  final AuthRepository _authRepository;
+  final FakeAuthRepository _authRepository;
 
   Future<bool> signIn({required String phone, required String password}) async {
     state = const AsyncLoading();
 
     try {
-      await _authRepository.signInWithPhoneAndPassword(
-        phone: phone,
-        password: password,
-      );
+      await _authRepository.signInwithNumberAndPassword(phone, password);
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
-      state = AsyncError(_authRepository.mapAuthError(error), stackTrace);
+      state = AsyncError(error, stackTrace);
       return false;
     }
   }
@@ -28,27 +24,21 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
     required String fullName,
     required String phone,
     required String password,
-    required AccountType accountType,
-    required String commune,
-    String? address,
     String? email,
   }) async {
     state = const AsyncLoading();
 
     try {
-      await _authRepository.signUpWithPhoneAndPassword(
-        fullName: fullName,
-        phone: phone,
+      await _authRepository.createUserWithPhoneNumberAndPassword(
+        username: fullName,
+        phoneNumber: phone,
         password: password,
-        accountType: accountType,
-        commune: commune,
-        address: address,
         email: email,
       );
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
-      state = AsyncError(_authRepository.mapAuthError(error), stackTrace);
+      state = AsyncError(error, stackTrace);
       return false;
     }
   }
@@ -56,5 +46,5 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
 
 final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, AsyncValue<void>>((ref) {
-      return AuthController(ref.watch(authRepositoryProvider));
+      return AuthController(ref.watch(fakeAuthRepositoryProvider));
     });

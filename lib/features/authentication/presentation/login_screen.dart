@@ -113,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Bienvenue sur\nMarketKin',
+                      'Bienvenue sur\nDksoft Market',
                       style: Theme.of(context).textTheme.headlineLarge
                           ?.copyWith(
                             color: Colors.white,
@@ -185,7 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           focused: true,
-                          hintText: '81 234 56 78',
+                          hintText: '995 415 641',
                           autofillHints: const [AutofillHints.telephoneNumber],
                           prefix: const _PhonePrefix(),
                           validator: (value) {
