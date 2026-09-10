@@ -256,11 +256,7 @@ class _Header extends StatelessWidget {
               onPressed: () {
                 final cartService = ref.read(cartServiceProvider);
                 for (final item in group.items) {
-                  cartService.removeItem(
-                    item.productId,
-                    item.variationId,
-                    item.dealerId,
-                  );
+                  cartService.removeItem(item.productId, item.variationId);
                 }
                 dialogContext.pop();
               },

@@ -1,5 +1,6 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
+import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/common/responsive_center.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_card.dart';
@@ -30,33 +31,40 @@ class WishListScreen extends ConsumerWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          ResponsiveSliderCenter(
-            padding: EdgeInsets.symmetric(
-              horizontal: Sizes.p20,
-              vertical: Sizes.p20,
-            ),
-            child: AsyncValueWidget(
-              value: wishListValue,
-              data: (wishlists) {
-                final items = wishlists.toItemsList();
+          AsyncValueSliverWidget(
+            value: wishListValue,
+            data: (wishlists) {
+              final items = wishlists.toItemsList();
 
-                return items.isEmpty
-                    ? Center(child: Text('No product found'))
-                    : CustomLayoutGrid(
-                        itemCount: items.length,
-                        itemBuilder: (_, index) {
-                          final item = items[index];
-                          final product = ref
-                              .watch(watchProductProvider(item))
-                              .value;
+              if (items.isEmpty) {
+                return const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: EmptyPlaceholderWidget(
+                    title: 'Aucun article',
+                    subTitle: 'vos articles favoris apparaitront ici.',
+                    icon: Icons.heart_broken,
+                  ),
+                );
+              }
 
-                          return product == null
-                              ? SizedBox.shrink()
-                              : ProductsCard(product: product);
-                        },
-                      );
-              },
-            ),
+              return ResponsiveSliderCenter(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.p20,
+                  vertical: Sizes.p20,
+                ),
+                child: CustomLayoutGrid(
+                  itemCount: items.length,
+                  itemBuilder: (_, index) {
+                    final item = items[index];
+                    final product = ref.watch(watchProductProvider(item)).value;
+
+                    return product == null
+                        ? const SizedBox.shrink()
+                        : ProductsCard(product: product);
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),

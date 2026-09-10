@@ -4,11 +4,11 @@ import 'package:dksoft_market/features/authentication/presentation/login_screen.
 import 'package:dksoft_market/features/authentication/presentation/signup_screen.dart';
 import 'package:dksoft_market/features/booking/booking_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
-import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/checkout/checkout_screen.dart';
 import 'package:dksoft_market/features/category/categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_category_products_screen.dart';
+import 'package:dksoft_market/features/products/presentation/widgets/dealer_picker_sheet.dart';
 import 'package:dksoft_market/features/wishlist/presentation/wishlist_screen.dart';
 import 'package:dksoft_market/features/home/home_screen.dart';
 import 'package:dksoft_market/features/onboarding/onboarding_screen.dart';
@@ -29,6 +29,7 @@ enum AppRoute {
   subCategoryProducts,
   cart,
   dealerCart,
+  dealers,
   checkout,
   bookings,
   profile,
@@ -48,13 +49,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = authRepository.currentUser != null;
       final path = state.matchedLocation;
-      final isAuthRoute = path == '/login' || path == 'signup';
+      final isAuthRoute = path == '/login' || path == '/signup';
       final isProtectedRoute = _protectedPaths.any(
         (route) => path.startsWith(route),
       );
 
       if (!isLoggedIn && isProtectedRoute) {
-        return '/login';
+        return Uri(
+          path: '/login',
+          queryParameters: {'from': state.uri.toString()},
+        ).toString();
       }
 
       if (isLoggedIn && isAuthRoute) {
@@ -97,6 +101,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       final productId = state.pathParameters['id']!;
                       return ProductScreen(productId: productId);
                     },
+                  ),
+
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: '/cart',
+                    name: AppRoute.cart.name,
+                    builder: (context, state) => CartScreen(),
+                    routes: [
+                      GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
+                        path: 'dealers',
+                        name: AppRoute.dealers.name,
+                        pageBuilder: (context, state) => MaterialPage(
+                          fullscreenDialog: true,
+                          child: ChooseDealerScreen(),
+                        ),
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: _rootNavigatorKey,
+                            path: 'checkout',
+                            name: AppRoute.checkout.name,
+                            builder: (context, state) {
+                              return CheckoutScreen();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
 
                   GoRoute(
@@ -148,40 +180,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/cart',
-                name: AppRoute.cart.name,
-                builder: (context, state) => CartScreen(),
-                routes: [
-                  GoRoute(
-                    parentNavigatorKey: _rootNavigatorKey,
-                    path: '/dealer-cart/:id',
-                    name: AppRoute.dealerCart.name,
-                    pageBuilder: (context, state) {
-                      final dealerId = state.pathParameters['id']!;
-                      return MaterialPage(
-                        fullscreenDialog: true,
-                        child: DealerCartScreen(dealerId: dealerId),
-                      );
-                    },
-                    routes: [
-                      GoRoute(
-                        parentNavigatorKey: _rootNavigatorKey,
-                        path: 'checkout',
-                        name: AppRoute.checkout.name,
-                        builder: (context, state) {
-                          final dealerId = state.pathParameters['id']!;
-                          return CheckoutScreen(dealerId: dealerId);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(

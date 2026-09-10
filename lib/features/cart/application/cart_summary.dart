@@ -11,7 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final cartLinesProvider = Provider<List<Item>>((ref) {
   return ref
       .watch(cartProvider)
-      .maybeMap(data: (cart) => cart.value.toItemList(), orElse: () => const []);
+      .maybeMap(
+        data: (cart) => cart.value.toItemList(),
+        orElse: () => const [],
+      );
 });
 
 /// Price for one cart line (unit price, after discount, multiplied by
@@ -37,13 +40,12 @@ final cartSubtotalProvider = Provider<double>((ref) {
 
 /// Line total before the merchant's reduction is applied — used to compute
 /// the "Remise" (discount) row shown in the dealer cart breakdown.
-final cartLineOriginalTotalProvider = Provider.autoDispose.family<double, Item>((
-  ref,
-  item,
-) {
-  final unitPrice = ref.watch(productOriginalPriceProvider(item));
-  return unitPrice * item.quantity;
-});
+final cartLineOriginalTotalProvider = Provider.autoDispose.family<double, Item>(
+  (ref, item) {
+    final unitPrice = ref.watch(productOriginalPriceProvider(item));
+    return unitPrice * item.quantity;
+  },
+);
 
 /// A dealer and the cart lines the client is buying through that dealer.
 ///
@@ -62,15 +64,13 @@ class DealerCartGroup {
 
 /// Total price of a [DealerCartGroup] — what will be checked against that
 /// dealer's provision at checkout.
-final dealerGroupTotalProvider = Provider.autoDispose.family<double, DealerCartGroup>((
-  ref,
-  group,
-) {
-  return group.items.fold<double>(
-    0,
-    (sum, item) => sum + ref.watch(cartLineTotalProvider(item)),
-  );
-});
+final dealerGroupTotalProvider = Provider.autoDispose
+    .family<double, DealerCartGroup>((ref, group) {
+      return group.items.fold<double>(
+        0,
+        (sum, item) => sum + ref.watch(cartLineTotalProvider(item)),
+      );
+    });
 
 /// Group total before the merchant's reduction — feeds "Prix de l'article"
 /// in the dealer cart breakdown.
@@ -101,7 +101,7 @@ final cartDealerGroupsProvider = Provider<List<DealerCartGroup>>((ref) {
 
   final Map<String, List<Item>> itemsByDealerId = {};
   for (final item in items) {
-    itemsByDealerId.putIfAbsent(item.dealerId, () => []).add(item);
+    itemsByDealerId.putIfAbsent('item', () => []).add(item);
   }
 
   final groups = itemsByDealerId.entries.map((entry) {

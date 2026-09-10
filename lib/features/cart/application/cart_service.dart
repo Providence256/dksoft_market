@@ -54,13 +54,9 @@ class CartService {
     await _setCart(updated);
   }
 
-  Future<void> removeItem(
-    String productId,
-    String? variationId,
-    String dealerId,
-  ) async {
+  Future<void> removeItem(String productId, String? variationId) async {
     final cart = await _fetchCart();
-    final updated = cart.removeItemById(productId, variationId, dealerId);
+    final updated = cart.removeItemById(productId, variationId);
 
     await _setCart(updated);
   }
@@ -83,6 +79,15 @@ final cartProvider = StreamProvider<Cart>((ref) {
     return ref.watch(localCartRepositoryProvider).watchCart();
   }
 });
+
+final isItemInCartProvider = Provider.autoDispose
+    .family<bool, ({String productId, String? variationId})>((ref, args) {
+      final cart = ref.watch(cartProvider).value;
+
+      if (cart == null) return false;
+
+      return cart.containsItem(args.productId, args.variationId);
+    });
 
 /// Total number of units in the cart (sum of every line's quantity), used
 /// e.g. to badge the cart icon in the bottom navigation bar.

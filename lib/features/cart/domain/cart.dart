@@ -47,9 +47,6 @@ class Cart {
 }
 
 extension CartItems on Cart {
-  /// Convertit la map brute `productId|variationId|dealerId -> quantité` en
-  /// liste d'[Item]s. `variationId` peut être vide (produit sans variation),
-  /// mais `dealerId` est toujours présent : voir [MutableCart._generatekey].
   List<Item> toItemList() {
     return items.entries.map((entry) {
       final keyParts = entry.key.split('|');
@@ -57,14 +54,34 @@ extension CartItems on Cart {
       final variationId = (keyParts.length > 1 && keyParts[1].isNotEmpty)
           ? keyParts[1]
           : null;
-      final dealerId = keyParts.length > 2 ? keyParts[2] : '';
 
       return Item(
         productId: productId,
         quantity: entry.value,
-        dealerId: dealerId,
         variationId: variationId,
       );
     }).toList();
+  }
+
+  bool containsItem(String productId, String? variationId) {
+    return items.keys.any((key) {
+      final parts = key.split('|');
+
+      if (parts.isEmpty) return false;
+
+      final keyProductId = parts[0];
+
+      // Produit sans variation
+      if (variationId == null) {
+        return keyProductId == productId && parts.length == 1;
+      }
+
+      // Produit avec variation
+      if (parts.length < 2) return false;
+
+      final keyVariationId = parts[1];
+
+      return keyProductId == productId && keyVariationId == variationId;
+    });
   }
 }

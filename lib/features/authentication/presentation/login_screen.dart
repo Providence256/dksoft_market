@@ -9,7 +9,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.onSuccess});
+
+  final VoidCallback? onSuccess;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -41,7 +43,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
 
     if (success && mounted) {
-      context.goNamed(AppRoute.home.name);
+      if (widget.onSuccess != null) {
+        widget.onSuccess!();
+        return;
+      }
+
+      final from = GoRouterState.of(context).uri.queryParameters['from'];
+      if (from != null && from.isNotEmpty) {
+        context.go(Uri.decodeComponent(from));
+      } else if (context.canPop()) {
+        context.pop();
+      } else {
+        context.goNamed(AppRoute.home.name);
+      }
     }
   }
 
@@ -338,8 +352,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () =>
-                                        context.pushNamed(AppRoute.signup.name),
+                                    ..onTap = () {
+                                      final from = GoRouterState.of(
+                                        context,
+                                      ).uri.queryParameters['from'];
+                                      context.pushNamed(
+                                        AppRoute.signup.name,
+                                        queryParameters: from != null
+                                            ? {'from': from}
+                                            : const {},
+                                      );
+                                    },
                                 ),
                               ],
                             ),

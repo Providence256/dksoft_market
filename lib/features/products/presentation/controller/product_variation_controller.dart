@@ -112,7 +112,7 @@ final productPriceProvider = Provider.autoDispose.family<double, Item>((
 
   DealerListing? listing;
   for (final l in listings) {
-    if (l.dealerId == item.dealerId) {
+    if (l.dealerId == item.variationId) {
       listing = l;
       break;
     }
@@ -151,7 +151,7 @@ final productOriginalPriceProvider = Provider.autoDispose.family<double, Item>((
 
   DealerListing? listing;
   for (final l in listings) {
-    if (l.dealerId == item.dealerId) {
+    if (l.dealerId == item.variationId) {
       listing = l;
       break;
     }

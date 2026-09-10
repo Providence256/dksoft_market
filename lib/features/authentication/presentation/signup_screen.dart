@@ -8,7 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({super.key, this.onSuccess});
+
+  final VoidCallback? onSuccess;
 
   @override
   ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
@@ -64,24 +66,21 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (!mounted) return;
 
     if (success) {
-      await showDialog(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text('Compte créé'),
-          content: Text('Votre compte a été crée.'),
-          actions: [
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (mounted) {
+        if (widget.onSuccess != null) {
+          widget.onSuccess!();
+          return;
+        }
 
-      if (mounted) context.goNamed(AppRoute.home.name);
+        final from = GoRouterState.of(context).uri.queryParameters['from'];
+        if (from != null && from.isNotEmpty) {
+          context.go(Uri.decodeComponent(from));
+        } else if (context.canPop()) {
+          context.pop();
+        } else {
+          context.goNamed(AppRoute.home.name);
+        }
+      }
     }
   }
 

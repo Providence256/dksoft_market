@@ -136,18 +136,13 @@ class _QuantityPill extends ConsumerWidget {
     void updateQuantity(int quantity) {
       ref
           .read(shoppingCartControllerProvider.notifier)
-          .updateItemQuantity(
-            item.productId,
-            quantity,
-            item.variationId,
-            item.dealerId,
-          );
+          .updateItemQuantity(item.productId, quantity, item.variationId);
     }
 
     void remove() {
       ref
           .read(cartServiceProvider)
-          .removeItem(item.productId, item.variationId, item.dealerId);
+          .removeItem(item.productId, item.variationId);
     }
 
     return Container(

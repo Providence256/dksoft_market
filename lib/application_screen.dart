@@ -1,4 +1,3 @@
-import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,8 +17,6 @@ class ApplicationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cartItemsCount = ref.watch(cartItemsCountProvider);
-
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBarTheme(
@@ -55,19 +52,7 @@ class ApplicationScreen extends ConsumerWidget {
               selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
               label: 'Favoris',
             ),
-            NavigationDestination(
-              icon: Badge(
-                isLabelVisible: cartItemsCount > 0,
-                label: Text('$cartItemsCount'),
-                child: HugeIcon(icon: HugeIcons.strokeRoundedShoppingCart02),
-              ),
-              selectedIcon: Badge(
-                isLabelVisible: cartItemsCount > 0,
-                label: Text('$cartItemsCount'),
-                child: HugeIcon(icon: HugeIcons.strokeRoundedShoppingCart02),
-              ),
-              label: 'Panier',
-            ),
+
             NavigationDestination(
               icon: HugeIcon(icon: HugeIcons.strokeRoundedInvoice01),
               selectedIcon: HugeIcon(icon: HugeIcons.strokeRoundedInvoice01),

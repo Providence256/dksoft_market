@@ -15,15 +15,10 @@ class AddToCartController extends _$AddToCartController {
     state = AsyncData(quantity);
   }
 
-  Future<void> addItem(
-    String productId,
-    String? variationId,
-    String dealerId,
-  ) async {
+  Future<void> addItem(String productId, String? variationId) async {
     final item = Item(
       productId: productId,
       quantity: state.value ?? 1,
-      dealerId: dealerId,
       variationId: variationId,
     );
 

@@ -13,7 +13,6 @@ const kTestDealers = [
     zone: 'Ngaliema',
     provisionDisponible: 500,
     provisionBloquee: 50,
-    commissionParDefaut: 8,
     status: DealerStatus.valide,
     rating: 4.7,
     commandesTraitees: 312,
@@ -25,7 +24,6 @@ const kTestDealers = [
     zone: 'Lemba',
     provisionDisponible: 260,
     provisionBloquee: 40,
-    commissionParDefaut: 10,
     status: DealerStatus.valide,
     rating: 4.5,
     commandesTraitees: 180,
@@ -37,7 +35,6 @@ const kTestDealers = [
     zone: 'Gombe',
     provisionDisponible: 1000,
     provisionBloquee: 0,
-    commissionParDefaut: 6,
     status: DealerStatus.valide,
     rating: 4.9,
     commandesTraitees: 540,
@@ -49,7 +46,6 @@ const kTestDealers = [
     zone: 'Limete',
     provisionDisponible: 90,
     provisionBloquee: 0,
-    commissionParDefaut: 12,
     // Pas encore validé : ne peut traiter aucune commande (§6.2).
     status: DealerStatus.enAttente,
     rating: 0,
@@ -63,18 +59,12 @@ const kTestDealers = [
     // Volontairement bas pour illustrer "provision insuffisante" au checkout.
     provisionDisponible: 20,
     provisionBloquee: 0,
-    commissionParDefaut: 9,
     status: DealerStatus.valide,
     rating: 4.1,
     commandesTraitees: 76,
   ),
 ];
 
-/// Sélections de produits par dealer (§5.4). Chaque dealer choisit dans le
-/// catalogue des commerçants (`test_products.dart`) et fixe sa propre marge.
-///
-/// - Produit '1' (Samsung Galaxy S25) : proposé par les dealers A, B, C, D.
-/// - Produit '5' (Nike Air Max) : proposé par les dealers A, B, G.
 const kTestDealerListings = [
   // --- Dealer 1 : A - Ngaliema Express ---
   DealerListing(dealerId: '1', productId: '1', margePourcentage: 8),

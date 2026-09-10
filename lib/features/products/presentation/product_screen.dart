@@ -4,7 +4,6 @@ import 'package:dksoft_market/common/fade_slide_in.dart';
 import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/buy_bottom_bar.dart';
-import 'package:dksoft_market/features/products/presentation/widgets/delivery_section.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/marchand_card.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/product_attributes.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/product_description.dart';
@@ -117,16 +116,6 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
                                 onTap: () {},
                               ),
                             ),
-                            CustomDivider(),
-                            FadeSlideIn(
-                              delay: Duration(milliseconds: 280),
-                              child: DeliverySection(
-                                fromAddress: 'Limeté',
-                                toAddress: 'Lemba',
-                                estimatedTime: '1hr',
-                              ),
-                            ),
-                            const SizedBox(height: 8),
                           ],
                         ),
                       ),

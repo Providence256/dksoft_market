@@ -229,7 +229,7 @@ class DealerCartCard extends ConsumerWidget {
   void _clearDealerCart(WidgetRef ref) {
     final cartService = ref.read(cartServiceProvider);
     for (final item in group.items) {
-      cartService.removeItem(item.productId, item.variationId, item.dealerId);
+      cartService.removeItem(item.productId, item.variationId);
     }
   }
 

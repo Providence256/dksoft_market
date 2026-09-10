@@ -1,5 +1,6 @@
 import 'package:dksoft_market/common/fade_slide_in.dart';
 import 'package:dksoft_market/common/responsive_center.dart';
+import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/home/widgets/category_filter_tab.dart';
 import 'package:dksoft_market/features/home/widgets/discount_widget.dart';
 import 'package:dksoft_market/features/home/widgets/home_annonce.dart';
@@ -147,12 +148,13 @@ class HeaderText extends StatelessWidget {
   }
 }
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final cartItemsCount = ref.watch(cartItemsCountProvider);
 
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -199,66 +201,59 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Livrer à',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        'Bienvenue',
+                        style: theme.textTheme.headlineMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.7),
                         ),
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      Row(
-                        children: [
-                          HugeIcon(
-                            icon: HugeIcons.strokeRoundedLocation04,
-                            size: Sizes.p16,
-                            color: AppColors.secondaryLight,
-                          ),
-
-                          const SizedBox(width: 5),
-
-                          Text(
-                            'Lemba',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary,
-                            ),
-                          ),
-
-                          const SizedBox(width: 5),
-
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            size: Sizes.p16,
-                            color: Colors.white,
-                          ),
-                        ],
                       ),
                     ],
                   ),
 
                   // Notification with a subtle pulsing badge
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: HugeIcon(
-                            icon: HugeIcons.strokeRoundedNotification01,
-                            color: Colors.white,
+                  Row(
+                    spacing: 10,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () => context.goNamed(AppRoute.cart.name),
+                          icon: Badge(
+                            isLabelVisible: cartItemsCount > 0,
+                            label: Text('$cartItemsCount'),
+                            child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedShoppingCart02,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        const Positioned(
-                          top: 10,
-                          right: 10,
-                          child: _PulsingDot(),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
                         ),
-                      ],
-                    ),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: HugeIcon(
+                                icon: HugeIcons.strokeRoundedNotification01,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Positioned(
+                              top: 10,
+                              right: 10,
+                              child: _PulsingDot(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -15,6 +15,10 @@ class FakeDealerRepository {
     }
   }
 
+  Stream<List<Dealer>> watchAllDealers() async* {
+    yield _dealers;
+  }
+
   /// Toutes les offres actives (dealer + marge) pour un produit donné,
   /// triées du moins cher au plus cher.
   List<DealerListing> getListingsForProduct(String productId) {
@@ -47,3 +51,9 @@ final dealerListingsForProductProvider =
           .watch(fakeDealerRepositoryProvider)
           .getListingsForProduct(productId);
     });
+
+final watchAllDealersProvider = StreamProvider.autoDispose<List<Dealer>>((ref) {
+  final repository = ref.watch(fakeDealerRepositoryProvider);
+
+  return repository.watchAllDealers();
+});

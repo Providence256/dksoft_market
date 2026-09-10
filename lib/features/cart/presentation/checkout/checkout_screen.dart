@@ -8,9 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum CheckoutSubRoute { register, payment }
 
 class CheckoutScreen extends ConsumerStatefulWidget {
-  const CheckoutScreen({super.key, required this.dealerId});
-
-  final String dealerId;
+  const CheckoutScreen({super.key});
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -39,14 +37,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(fakeAuthStateChangeProvider, (previous, next) {
+      final isLoggedIn = next.value != null;
+      if (isLoggedIn && _subRoute == CheckoutSubRoute.register) {
+        setState(() => _subRoute = CheckoutSubRoute.payment);
+
+        _controller.animateToPage(
+          CheckoutSubRoute.payment.index,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
         controller: _controller,
         children: [
-          LoginScreen(),
-          PaymentScreen(dealerId: widget.dealerId),
+          LoginScreen(onSuccess: () {}),
+          PaymentScreen(),
         ],
       ),
     );

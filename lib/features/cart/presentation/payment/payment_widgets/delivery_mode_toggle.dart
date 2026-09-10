@@ -34,16 +34,9 @@ class DeliveryModeToggle extends StatelessWidget {
         children: [
           Expanded(
             child: _ToggleOption(
-              label: 'Livraison à domicile',
+              label: ' A recuperer chez le dealer',
               selected: mode == DeliveryMode.home,
               onTap: () => onChanged(DeliveryMode.home),
-            ),
-          ),
-          Expanded(
-            child: _ToggleOption(
-              label: 'À emporter',
-              selected: mode == DeliveryMode.pickup,
-              onTap: () => onChanged(DeliveryMode.pickup),
             ),
           ),
         ],

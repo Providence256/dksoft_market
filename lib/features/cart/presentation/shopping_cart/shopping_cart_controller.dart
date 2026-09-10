@@ -12,13 +12,11 @@ class ShoppingCartController extends StateNotifier<AsyncValue<void>> {
     String productId,
     int quantity,
     String? variationId,
-    String dealerId,
   ) async {
     state = AsyncLoading();
     final update = Item(
       productId: productId,
       quantity: quantity,
-      dealerId: dealerId,
       variationId: variationId,
     );
 

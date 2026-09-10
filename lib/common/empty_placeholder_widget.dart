@@ -26,22 +26,18 @@ class EmptyPlaceholderWidget extends StatelessWidget {
               color: AppColors.primary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.shopping_cart_outlined,
-              size: Sizes.p48,
-              color: AppColors.primary,
-            ),
+            child: Icon(icon, size: Sizes.p48, color: AppColors.primary),
           ),
           SizedBox(height: Sizes.p16),
           Text(
-            'Aucun panier pour le moment',
+            title,
             style: Theme.of(
               context,
             ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
-            'Les articles que vous ajoutez apparaîtront ici,\ngroupés par dealer.',
+            subTitle,
             textAlign: TextAlign.center,
             style: Theme.of(
               context,

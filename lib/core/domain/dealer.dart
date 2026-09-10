@@ -1,13 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-/// Statut de validation d'un dealer par l'administration (voir §5.9 / §6.2
-/// du cahier des charges : "Le dealer doit être validé par l'administration").
 enum DealerStatus { enAttente, valide, suspendu, refuse }
 
-/// Un dealer : intermédiaire entre le client et les produits des
-/// commerçants. Doit disposer d'une provision suffisante pour valider une
-/// commande (§4.2, §5.5 du cahier des charges).
 class Dealer {
   const Dealer({
     required this.id,
@@ -16,7 +11,6 @@ class Dealer {
     required this.zone,
     required this.provisionDisponible,
     this.provisionBloquee = 0,
-    this.commissionParDefaut = 10,
     this.status = DealerStatus.valide,
     this.rating = 0,
     this.commandesTraitees = 0,
@@ -25,8 +19,6 @@ class Dealer {
   final String id;
   final String name;
   final String phone;
-
-  /// Commune d'activité principale à Kinshasa (§8).
   final String zone;
 
   /// Solde que le dealer peut utiliser pour couvrir de nouvelles commandes.
@@ -34,11 +26,6 @@ class Dealer {
 
   /// Montant déjà réservé pour des commandes en cours de traitement.
   final double provisionBloquee;
-
-  /// Marge/commission par défaut (%) appliquée sur le prix commerçant quand
-  /// une [DealerListing] ne définit pas sa propre marge.
-  final double commissionParDefaut;
-
   final DealerStatus status;
   final double rating;
   final int commandesTraitees;
@@ -47,9 +34,8 @@ class Dealer {
 
   bool get estValide => status == DealerStatus.valide;
 
-  /// Règle centrale du cahier des charges (§4.2, §6.2) : un dealer ne peut
-  /// traiter une commande que si sa provision disponible couvre le montant.
-  bool peutCouvrir(double montant) => estValide && provisionDisponible >= montant;
+  bool peutCouvrir(double montant) =>
+      estValide && provisionDisponible >= montant;
 
   Dealer copyWith({
     String? id,
@@ -70,7 +56,6 @@ class Dealer {
       zone: zone ?? this.zone,
       provisionDisponible: provisionDisponible ?? this.provisionDisponible,
       provisionBloquee: provisionBloquee ?? this.provisionBloquee,
-      commissionParDefaut: commissionParDefaut ?? this.commissionParDefaut,
       status: status ?? this.status,
       rating: rating ?? this.rating,
       commandesTraitees: commandesTraitees ?? this.commandesTraitees,
@@ -85,7 +70,6 @@ class Dealer {
       'zone': zone,
       'provisionDisponible': provisionDisponible,
       'provisionBloquee': provisionBloquee,
-      'commissionParDefaut': commissionParDefaut,
       'status': status.name,
       'rating': rating,
       'commandesTraitees': commandesTraitees,
@@ -100,8 +84,6 @@ class Dealer {
       zone: map['zone'] as String,
       provisionDisponible: (map['provisionDisponible'] as num).toDouble(),
       provisionBloquee: (map['provisionBloquee'] as num? ?? 0).toDouble(),
-      commissionParDefaut: (map['commissionParDefaut'] as num? ?? 10)
-          .toDouble(),
       status: DealerStatus.values.firstWhere(
         (s) => s.name == map['status'],
         orElse: () => DealerStatus.enAttente,
