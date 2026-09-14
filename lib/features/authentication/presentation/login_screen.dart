@@ -80,43 +80,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GoRouter.of(context).canPop()
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: IconButton(
-                      onPressed: () => context.pop(),
-                      icon: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.6),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: IconButton(
-                      onPressed: () => context.goNamed(AppRoute.home.name),
-                      icon: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.6),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                      ),
-                    ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: IconButton(
+                onPressed: () => GoRouter.of(context).canPop()
+                    ? context.pop()
+                    : context.goNamed(AppRoute.home.name),
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.6),
+                    shape: BoxShape.circle,
                   ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ),
+
             // ---- En-tête bleu marine ----
             Expanded(
               flex: 3,
@@ -348,7 +332,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 TextSpan(
                                   text: 'Créer un compte',
                                   style: const TextStyle(
-                                    color: AppColors.primary,
+                                    color: AppColors.secondary,
                                     fontWeight: FontWeight.w700,
                                   ),
                                   recognizer: TapGestureRecognizer()

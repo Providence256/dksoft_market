@@ -2,6 +2,7 @@ import 'package:dksoft_market/features/authentication/presentation/auth_controll
 import 'package:dksoft_market/features/authentication/presentation/widgets/auth_text_field.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -308,13 +309,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 const SizedBox(height: 16),
 
                 Center(
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Déjà un compte ? Se connecter',
+                  child: RichText(
+                    text: TextSpan(
                       style: Theme.of(
                         context,
-                      ).textTheme.bodyLarge!.copyWith(color: AppColors.primary),
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                      children: [
+                        const TextSpan(text: 'Déjà un compte ? '),
+                        TextSpan(
+                          text: 'Se connecter',
+                          style: const TextStyle(
+                            color: AppColors.secondary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).pop();
+                            },
+                        ),
+                      ],
                     ),
                   ),
                 ),

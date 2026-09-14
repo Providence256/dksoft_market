@@ -1,10 +1,9 @@
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/heart_icon_container.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/product_attributes.dart';
 
 import 'package:dksoft_market/helpers/pricing_calculator.dart';
-import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProductTitle extends StatelessWidget {

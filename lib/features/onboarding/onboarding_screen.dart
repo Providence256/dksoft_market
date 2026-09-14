@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: () {
                     if (_currentPage < 3 - 1) {
                       _controller.nextPage(
-                        duration: Duration(milliseconds: 300),
+                        duration: Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                       );
                     } else {

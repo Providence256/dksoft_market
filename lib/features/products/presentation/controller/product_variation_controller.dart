@@ -1,8 +1,6 @@
-import 'package:dksoft_market/core/domain/dealer_listing.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
-import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
-import 'package:dksoft_market/features/home/domain/product_variation.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_variation.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/helpers/pricing_calculator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,8 +83,6 @@ final productPriceProvider = Provider.autoDispose.family<double, Item>((
 ) {
   final product = ref.watch(watchProductProvider(item.productId)).value;
 
-  if (product == null) return 0.0;
-
   final selectedVariation = ref
       .watch(
         productVariationProvider((
@@ -96,35 +92,21 @@ final productPriceProvider = Provider.autoDispose.family<double, Item>((
       )
       .value;
 
+  if (product == null) return 0.0;
+
   final hasVariations = product.variations.isNotEmpty;
   final basePrice = hasVariations
       ? (selectedVariation?.price ?? product.price)
       : product.price;
 
-  final merchantPrice = product.reduction <= 0
-      ? basePrice
-      : PricingCalculator.calculateSellingPrice(
-          basePrice,
-          product.reduction.clamp(0, 100),
-        );
+  final sellingPrice = product.reduction > 0
+      ? PricingCalculator.calculateSellingPrice(basePrice, product.reduction)
+      : basePrice;
 
-  final listings = ref.watch(dealerListingsForProductProvider(item.productId));
-
-  DealerListing? listing;
-  for (final l in listings) {
-    if (l.dealerId == item.variationId) {
-      listing = l;
-      break;
-    }
-  }
-
-  return listing == null ? merchantPrice : listing.prixVente(merchantPrice);
+  return sellingPrice;
 });
 
-/// Même chose que [productPriceProvider] mais SANS la réduction commerçant
-/// — le prix "barré" affiché dans le panier (§4.1 : le commerçant peut
-/// définir des "conditions particulières" dont une promotion). La
-/// différence entre les deux donne la ligne "Remise" du récapitulatif.
+/// — le prix "barré" affiché dans le panier
 final productOriginalPriceProvider = Provider.autoDispose.family<double, Item>((
   ref,
   item,
@@ -143,19 +125,7 @@ final productOriginalPriceProvider = Provider.autoDispose.family<double, Item>((
       .value;
 
   final hasVariations = product.variations.isNotEmpty;
-  final basePrice = hasVariations
+  return hasVariations
       ? (selectedVariation?.price ?? product.price)
       : product.price;
-
-  final listings = ref.watch(dealerListingsForProductProvider(item.productId));
-
-  DealerListing? listing;
-  for (final l in listings) {
-    if (l.dealerId == item.variationId) {
-      listing = l;
-      break;
-    }
-  }
-
-  return listing == null ? basePrice : listing.prixVente(basePrice);
 });

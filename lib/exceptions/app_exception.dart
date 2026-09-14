@@ -7,3 +7,11 @@ sealed class AppException implements Exception {
   @override
   String toString() => message;
 }
+
+//Orders
+
+class ParseOrderFailureException extends AppException {
+  ParseOrderFailureException(this.status)
+    : super('parse-order-failure', 'Statut de commande inconnu: $status');
+  final String status;
+}

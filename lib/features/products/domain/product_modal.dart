@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:dksoft_market/core/domain/brands.dart';
-import 'package:dksoft_market/features/home/domain/product_attribut.dart';
-import 'package:dksoft_market/features/home/domain/product_variation.dart';
+import 'package:dksoft_market/features/products/domain/product_attribut.dart';
+import 'package:dksoft_market/features/products/domain/product_variation.dart';
 
 class ProductModal {
   const ProductModal({

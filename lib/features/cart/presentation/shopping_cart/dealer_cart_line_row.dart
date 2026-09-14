@@ -1,7 +1,7 @@
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/shopping_cart_controller.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_variation_controller.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/formatters/currency_formatter.dart';

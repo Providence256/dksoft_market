@@ -71,12 +71,10 @@ extension CartItems on Cart {
 
       final keyProductId = parts[0];
 
-      // Produit sans variation
       if (variationId == null) {
         return keyProductId == productId && parts.length == 1;
       }
 
-      // Produit avec variation
       if (parts.length < 2) return false;
 
       final keyVariationId = parts[1];

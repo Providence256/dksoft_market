@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/wishlist/presentation/wishlist_controller.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';

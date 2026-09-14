@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 
 class PricingCalculator {
   // Selling price after discount

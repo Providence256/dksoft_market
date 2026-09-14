@@ -4,7 +4,12 @@ import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-const _banners = [AppAssets.banner_1, AppAssets.banner_2];
+const _banners = [
+  AppAssets.banner_3,
+  AppAssets.banner_4,
+  AppAssets.banner_5,
+  AppAssets.banner_6,
+];
 
 class HomeAnnonceContainer extends StatefulWidget {
   const HomeAnnonceContainer({super.key});

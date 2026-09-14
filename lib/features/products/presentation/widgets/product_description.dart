@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:flutter/material.dart';
 
 class ProductDescription extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:dksoft_market/core/domain/brands.dart';
-import 'package:dksoft_market/features/home/domain/product_attribut.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
-import 'package:dksoft_market/features/home/domain/product_variation.dart';
+import 'package:dksoft_market/features/products/domain/product_attribut.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_variation.dart';
 
 const kTestProducts = [
   ProductModal(

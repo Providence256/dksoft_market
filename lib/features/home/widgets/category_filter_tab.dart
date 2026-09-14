@@ -79,6 +79,7 @@ class CategoryTab extends StatelessWidget {
             child: Image(
               image: AssetImage(category.imageUrl),
               fit: BoxFit.contain,
+              color: AppColors.primary,
             ),
           ),
         ),

@@ -2,12 +2,14 @@ import 'package:dksoft_market/application_screen.dart';
 import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
 import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
 import 'package:dksoft_market/features/authentication/presentation/signup_screen.dart';
-import 'package:dksoft_market/features/booking/booking_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/checkout/checkout_screen.dart';
 import 'package:dksoft_market/features/category/categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_category_products_screen.dart';
+import 'package:dksoft_market/features/orders/presentation/order_details_screen.dart';
+import 'package:dksoft_market/features/orders/presentation/order_tracking_screen.dart';
+import 'package:dksoft_market/features/orders/presentation/orders_screen.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/dealer_picker_sheet.dart';
 import 'package:dksoft_market/features/wishlist/presentation/wishlist_screen.dart';
 import 'package:dksoft_market/features/home/home_screen.dart';
@@ -31,13 +33,15 @@ enum AppRoute {
   dealerCart,
   dealers,
   checkout,
-  bookings,
+  orders,
+  orderDetails,
+  orderTracking,
   profile,
   login,
   signup,
 }
 
-const _protectedPaths = ['/profile', '/bookings'];
+const _protectedPaths = ['/profile', '/orders'];
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -75,7 +79,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: AppRoute.login.name,
-        builder: (context, state) => LoginScreen(),
+        pageBuilder: (context, state) =>
+            MaterialPage(fullscreenDialog: true, child: LoginScreen()),
       ),
       GoRoute(
         path: '/signup',
@@ -184,9 +189,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/bookings',
-                name: AppRoute.bookings.name,
-                builder: (context, state) => BookingScreen(),
+                path: '/orders',
+                name: AppRoute.orders.name,
+                builder: (context, state) => OrdersScreen(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: ':orderId',
+                    name: AppRoute.orderDetails.name,
+                    builder: (context, state) {
+                      final orderId = state.pathParameters['orderId']!;
+                      return OrderDetailsScreen(orderId: orderId);
+                    },
+                    routes: [
+                      GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
+                        path: 'tracking',
+                        name: AppRoute.orderTracking.name,
+                        pageBuilder: (context, state) {
+                          final orderId = state.pathParameters['orderId']!;
+                          return MaterialPage(
+                            fullscreenDialog: true,
+                            child: OrderTrackingScreen(orderId: orderId),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

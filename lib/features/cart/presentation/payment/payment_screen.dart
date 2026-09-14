@@ -1,16 +1,40 @@
+import 'dart:math';
+
+import 'package:dksoft_market/common/custom_divider.dart';
+import 'package:dksoft_market/common/empty_placeholder_widget.dart';
+import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/cart/application/cart_service.dart';
+import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/bill_row.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/delivery_mode_toggle.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/info_row.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_bottom_bar.dart';
+import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_cart_line_row.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_header.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/section_card.dart';
+import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
+import 'package:dksoft_market/features/orders/data/fake_orders_repository.dart';
+import 'package:dksoft_market/features/orders/domain/order_model.dart';
+import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/presentation/controller/selected_dealer_controller.dart';
+import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
-import 'package:dksoft_market/utils/formatters/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+
+const _orderIdChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+String _generateOrderId() {
+  final random = Random();
+
+  return List.generate(
+    8,
+    (_) => _orderIdChars[random.nextInt(_orderIdChars.length)],
+  ).join();
+}
 
 class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key});
@@ -21,9 +45,17 @@ class PaymentScreen extends ConsumerStatefulWidget {
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   DeliveryMode _mode = DeliveryMode.home;
+  bool _isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
+    final items = ref.watch(cartLinesProvider);
+    final productRepository = ref.watch(fakeProductsRepositoryProvider);
+    final selectedDealerId = ref.watch(selectedDealerProvider);
+    final dealer = selectedDealerId == null
+        ? null
+        : ref.watch(dealerByIdProvider(selectedDealerId));
+    final subTotal = ref.watch(cartSubtotalProvider);
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -51,15 +83,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                         InfoRow(
                           icon: HugeIcons.strokeRoundedLocation04,
                           title: 'Position actuelle',
-                          subtitle:
-                              '86Q3+2V8, Goma, Democratic Republic of the Congo',
+                          subtitle: '${dealer?.zone}',
                           onEdit: () => _showComingSoon(context, 'adresse'),
                         ),
                         const SizedBox(height: Sizes.p16),
                         InfoRow(
                           icon: HugeIcons.strokeRoundedUser,
-                          title: 'Client',
-                          subtitle: 'Aucun numéro',
+                          title: '${dealer?.name}',
+                          subtitle: '${dealer?.phone}',
                           onEdit: () => _showComingSoon(context, 'contact'),
                         ),
                       ],
@@ -67,13 +98,45 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   ),
                   const SizedBox(height: Sizes.p16),
 
+                  SectionCard(
+                    child: items.isEmpty
+                        ? EmptyPlaceholderWidget(
+                            title: 'title',
+                            subTitle: 'subTitle',
+                            icon: Icons.fork_left,
+                          )
+                        : Column(
+                            children: [
+                              for (var i = 0; i < items.length; i++) ...[
+                                if (i > 0) const CustomDivider(),
+                                Builder(
+                                  builder: (_) {
+                                    final item = items[i];
+                                    final product = productRepository
+                                        .getProduct(item.productId);
+
+                                    if (product == null) {
+                                      return SizedBox.shrink();
+                                    }
+
+                                    return PaymentCartLineRow(
+                                      product: product,
+                                      item: item,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+                  ),
+                  const SizedBox(height: Sizes.p16),
                   Text(
                     'Récapitulatif de la facturation',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: Sizes.p12),
-                  BillRow(label: "Prix de l'article", value: 100),
-                  BillRow(label: 'Remise', value: -10),
+                  BillRow(label: "Prix de l'article", value: subTotal),
+                  //BillRow(label: 'Remise', value: -10),
                   BillRow(label: 'Frais de livraison', valueText: 'Gratuit'),
                 ],
               ),
@@ -82,8 +145,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         ),
       ),
       bottomNavigationBar: PaymentBottomBar(
-        total: 100,
-        onConfirm: () => _confirmOrder(context, 10),
+        total: subTotal,
+        onConfirm: (dealer == null || items.isEmpty || _isSubmitting)
+            ? null
+            : () => _confirmOrder(context, dealer.id, subTotal),
       ),
     );
   }
@@ -94,25 +159,45 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  void _confirmOrder(BuildContext context, double total) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Commande validée'),
-        content: Text(
-          'Commande de ${CurrencyFormatter.format(total)} confirmée chez .'
-          ' ne peut pas encore couvrir cette commande. Réessayez plus tard.',
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              dialogContext.pop();
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+  void _confirmOrder(
+    BuildContext context,
+    String dealerId,
+    double total,
+  ) async {
+    final user = ref.watch(fakeAuthRepositoryProvider).currentUser;
+
+    if (user == null) return;
+
+    setState(() => _isSubmitting = true);
+
+    final items = ref.watch(cartLinesProvider);
+    final orderItems = {
+      for (final item in items)
+        orderItemKey(item.productId, item.productId): item.quantity,
+    };
+
+    final order = OrderModel(
+      id: _generateOrderId(),
+      userId: user.uid,
+      items: orderItems,
+      orderStatus: OrderStatus.pending,
+      orderDate: DateTime.now(),
+      total: total,
+      dealerId: dealerId,
     );
+
+    await ref.read(ordersRepositoryProvider).addOrder(user.uid, order);
+
+    final cartService = ref.read(cartServiceProvider);
+    for (final item in items) {
+      await cartService.removeItem(item.productId, item.variationId);
+    }
+
+    ref.read(selectedDealerProvider.notifier).state = null;
+
+    if (!context.mounted) return;
+    setState(() => _isSubmitting = false);
+
+    context.goNamed(AppRoute.orders.name);
   }
 }

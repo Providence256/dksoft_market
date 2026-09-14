@@ -11,7 +11,7 @@ class PaymentBottomBar extends StatelessWidget {
   });
 
   final double total;
-  final VoidCallback onConfirm;
+  final VoidCallback? onConfirm;
 
   @override
   Widget build(BuildContext context) {

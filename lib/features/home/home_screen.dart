@@ -4,6 +4,8 @@ import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/home/widgets/category_filter_tab.dart';
 import 'package:dksoft_market/features/home/widgets/discount_widget.dart';
 import 'package:dksoft_market/features/home/widgets/home_annonce.dart';
+import 'package:dksoft_market/features/home/widgets/home_text.dart';
+import 'package:dksoft_market/features/home/widgets/pulsing_dot.dart';
 import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_grid.dart';
 import 'package:dksoft_market/routing/app_router.dart';
@@ -93,57 +95,6 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class HeaderText extends StatelessWidget {
-  const HeaderText({
-    super.key,
-    required this.text,
-    required this.subtitle,
-    this.onTap,
-  });
-
-  final String text;
-  final String subtitle;
-  final VoidCallback? onTap;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(text, style: theme.textTheme.headlineSmall),
-        InkWell(
-          borderRadius: BorderRadius.circular(Sizes.p8),
-          onTap: onTap ?? () {},
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall!.copyWith(
-                    color: theme.colorScheme.secondary,
-                    fontSize: 12,
-                    decoration: TextDecoration.underline,
-                    decorationColor: theme.colorScheme.secondary,
-                    decorationThickness: 2,
-                  ),
-                ),
-                const SizedBox(width: 2),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 16,
-                  color: theme.colorScheme.secondary,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -248,7 +199,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
                             const Positioned(
                               top: 10,
                               right: 10,
-                              child: _PulsingDot(),
+                              child: PulsingDot(),
                             ),
                           ],
                         ),
@@ -311,48 +262,4 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(130);
-}
-
-/// A small badge that gently pulses to draw the eye toward new
-/// notifications without being distracting.
-class _PulsingDot extends StatefulWidget {
-  const _PulsingDot();
-
-  @override
-  State<_PulsingDot> createState() => _PulsingDotState();
-}
-
-class _PulsingDotState extends State<_PulsingDot>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  )..repeat(reverse: true);
-
-  late final Animation<double> _scale = Tween<double>(
-    begin: 0.85,
-    end: 1.25,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _scale,
-      child: Container(
-        width: 9,
-        height: 9,
-        decoration: BoxDecoration(
-          color: AppColors.secondary,
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.primaryDark, width: 1.5),
-        ),
-      ),
-    );
-  }
 }

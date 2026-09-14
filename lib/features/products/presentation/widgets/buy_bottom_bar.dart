@@ -1,6 +1,6 @@
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/presentation/add_to_cart/add_to_cart_controller.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_controller.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:flutter/material.dart';

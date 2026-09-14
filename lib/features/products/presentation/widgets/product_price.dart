@@ -1,5 +1,5 @@
 import 'package:dksoft_market/common/heart_icon_container.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_controller.dart';
 import 'package:dksoft_market/helpers/pricing_calculator.dart';
 import 'package:dksoft_market/utils/formatters/currency_formatter.dart';

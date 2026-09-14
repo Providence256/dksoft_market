@@ -5,4 +5,8 @@ class AppAssets {
 
   static const banner_1 = 'assets/images/banner_1.jpg';
   static const banner_2 = 'assets/images/banner_2.jpg';
+  static const banner_3 = 'assets/images/annonce.jpg';
+  static const banner_4 = 'assets/images/annonce_2.jpg';
+  static const banner_5 = 'assets/images/annonce_3.jpg';
+  static const banner_6 = 'assets/images/annonce_4.jpg';
 }

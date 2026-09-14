@@ -60,14 +60,6 @@ class InfoRow extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          onPressed: onEdit,
-          icon: const Icon(
-            Icons.edit_outlined,
-            color: AppColors.primary,
-            size: 18,
-          ),
-        ),
       ],
     );
   }

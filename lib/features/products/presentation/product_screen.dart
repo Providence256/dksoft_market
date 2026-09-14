@@ -41,7 +41,6 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
       onNotification: (notification) {
         if (notification.metrics.axis == Axis.vertical) {
           final scrolled = notification.metrics.pixels > 150;
-          // Avoid calling setState on every scroll delta, only on flips.
           if (scrolled != _scrolled) {
             setState(() => _scrolled = scrolled);
           }

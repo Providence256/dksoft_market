@@ -1,5 +1,5 @@
 import 'package:dksoft_market/common/heart_icon_container.dart';
-import 'package:dksoft_market/features/home/domain/product_modal.dart';
+import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/product_image_container.dart';
 import 'package:dksoft_market/routing/app_router.dart';
