@@ -15,7 +15,7 @@ import 'package:dksoft_market/features/wishlist/presentation/wishlist_screen.dar
 import 'package:dksoft_market/features/home/home_screen.dart';
 import 'package:dksoft_market/features/onboarding/onboarding_screen.dart';
 import 'package:dksoft_market/features/products/presentation/product_screen.dart';
-import 'package:dksoft_market/features/profile/profile_screen.dart';
+import 'package:dksoft_market/features/profile/presentation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

@@ -321,23 +321,23 @@ const kTestProducts = [
       ProductVariation(
         id: '1',
         price: 320,
-        stock: 22,
+        stock: 18,
         attributeValues: {'Couleur': 'White', 'Stockage': '128 GB'},
       ),
       ProductVariation(
-        id: '1',
+        id: '2',
         price: 320,
         stock: 0,
         attributeValues: {'Couleur': 'White', 'Stockage': '512 GB'},
       ),
       ProductVariation(
-        id: '2',
+        id: '3',
         price: 320,
         stock: 0,
         attributeValues: {'Couleur': 'Black', 'Stockage': '128 GB'},
       ),
       ProductVariation(
-        id: '2',
+        id: '4',
         price: 320,
         stock: 2,
         attributeValues: {'Couleur': 'Black', 'Stockage': '512 GB'},
