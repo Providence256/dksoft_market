@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dksoft_market/features/authentication/domain/account_type.dart';
 import 'package:dksoft_market/features/authentication/domain/app_user.dart';
 import 'package:dksoft_market/features/authentication/domain/firebase_app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +23,10 @@ class AuthRepository {
 
   String _pseudoEmailFor(String phone) {
     final digits = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    return '$digits@dksoft-market.app';
+    // Distinct domain from the dealer app's — the two apps share this
+    // Firebase project, and setClientRoleClaim / setDealerRoleClaim (Cloud
+    // Functions) tell accounts apart only by this pseudo-email domain.
+    return '$digits@dksoft-market-client.app';
   }
 
   Future<void> signInWithPhoneAndPassword({
@@ -41,9 +43,6 @@ class AuthRepository {
     required String fullName,
     required String phone,
     required String password,
-    required AccountType accountType,
-    required String commune,
-    String? address,
     String? email,
   }) async {
     final credential = await _auth.createUserWithEmailAndPassword(
@@ -60,15 +59,23 @@ class AuthRepository {
       'fullName': fullName,
       'phone': phone,
       'contactEmail': email,
-      'accountType': accountType.name,
-      'commune': commune,
-      'address': address,
-      'validated': !accountType.requiresAdminValidation,
+
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
   Future<void> signOut() => _auth.signOut();
+
+  /// Source of truth for "is this a client account" — reads the `role`
+  /// custom claim set by the setClientRoleClaim Cloud Function. Forces a
+  /// token refresh so a claim set moments ago (e.g. right after sign-up)
+  /// is visible immediately; Firebase otherwise caches the ID token.
+  Future<bool> currentUserIsClient() async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+    final tokenResult = await user.getIdTokenResult(true);
+    return tokenResult.claims?['role'] == 'client';
+  }
 
   String mapAuthError(Object error) {
     if (error is FirebaseAuthException) {

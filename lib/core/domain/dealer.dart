@@ -1,121 +1,134 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:dksoft_market/core/domain/pickup_location.dart';
 
 enum DealerStatus { enAttente, valide, suspendu, refuse }
 
-class Dealer {
-  const Dealer({
+class DealerModel {
+  DealerModel({
     required this.id,
-    required this.name,
+    required this.fullName,
     required this.phone,
-    required this.zone,
+    this.email,
+    this.address,
     required this.provisionDisponible,
-    this.provisionBloquee = 0,
+    required this.provisionBloquee,
+    required this.provisonRetirable,
     this.status = DealerStatus.valide,
-    this.rating = 0,
-    this.commandesTraitees = 0,
+    required this.rating,
   });
 
   final String id;
-  final String name;
+  final String fullName;
   final String phone;
-  final String zone;
-
-  /// Solde que le dealer peut utiliser pour couvrir de nouvelles commandes.
+  final String? email;
+  final PickupLocation? address;
   final double provisionDisponible;
-
-  /// Montant déjà réservé pour des commandes en cours de traitement.
   final double provisionBloquee;
+  final double provisonRetirable;
   final DealerStatus status;
   final double rating;
-  final int commandesTraitees;
 
   double get provisionTotale => provisionDisponible + provisionBloquee;
+  bool get isValid => status == DealerStatus.valide;
+  bool peutCouvrir(double montant) => isValid && provisionDisponible >= montant;
 
-  bool get estValide => status == DealerStatus.valide;
-
-  bool peutCouvrir(double montant) =>
-      estValide && provisionDisponible >= montant;
-
-  Dealer copyWith({
+  DealerModel copyWith({
     String? id,
-    String? name,
+    String? fullName,
     String? phone,
-    String? zone,
+    String? email,
+    PickupLocation? address,
     double? provisionDisponible,
     double? provisionBloquee,
-    double? commissionParDefaut,
+    double? provisonRetirable,
     DealerStatus? status,
     double? rating,
-    int? commandesTraitees,
   }) {
-    return Dealer(
+    return DealerModel(
       id: id ?? this.id,
-      name: name ?? this.name,
+      fullName: fullName ?? this.fullName,
       phone: phone ?? this.phone,
-      zone: zone ?? this.zone,
+      email: email ?? this.email,
+      address: address ?? this.address,
       provisionDisponible: provisionDisponible ?? this.provisionDisponible,
       provisionBloquee: provisionBloquee ?? this.provisionBloquee,
+      provisonRetirable: provisonRetirable ?? this.provisonRetirable,
       status: status ?? this.status,
       rating: rating ?? this.rating,
-      commandesTraitees: commandesTraitees ?? this.commandesTraitees,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': name,
+      'fullName': fullName,
       'phone': phone,
-      'zone': zone,
+      'email': email,
+      'address': address?.toMap(),
       'provisionDisponible': provisionDisponible,
       'provisionBloquee': provisionBloquee,
+      'provisonRetirable': provisonRetirable,
       'status': status.name,
       'rating': rating,
-      'commandesTraitees': commandesTraitees,
     };
   }
 
-  factory Dealer.fromMap(Map<String, dynamic> map) {
-    return Dealer(
+  factory DealerModel.fromMap(Map<String, dynamic> map) {
+    return DealerModel(
       id: map['id'] as String,
-      name: map['name'] as String,
+      fullName: map['fullName'] as String,
       phone: map['phone'] as String,
-      zone: map['zone'] as String,
+      email: map['email'] != null ? map['email'] as String : null,
+      address: PickupLocation.fromMap(map['address'] as Map<String, dynamic>),
       provisionDisponible: (map['provisionDisponible'] as num).toDouble(),
-      provisionBloquee: (map['provisionBloquee'] as num? ?? 0).toDouble(),
+      provisionBloquee: (map['provisionBloquee'] as num).toDouble(),
+      provisonRetirable: (map['provisonRetirable'] as num).toDouble(),
       status: DealerStatus.values.firstWhere(
         (s) => s.name == map['status'],
         orElse: () => DealerStatus.enAttente,
       ),
-      rating: (map['rating'] as num? ?? 0).toDouble(),
-      commandesTraitees: (map['commandesTraitees'] as num? ?? 0).toInt(),
+      rating: (map['rating'] as num).toDouble(),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Dealer.fromJson(String source) =>
-      Dealer.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory DealerModel.fromJson(String source) =>
+      DealerModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'Dealer(id: $id, name: $name, zone: $zone, '
-      'provisionDisponible: $provisionDisponible, status: $status)';
-
-  @override
-  bool operator ==(covariant Dealer other) {
-    if (identical(this, other)) return true;
-    return other.id == id &&
-        other.provisionDisponible == provisionDisponible &&
-        other.provisionBloquee == provisionBloquee &&
-        other.status == status;
+  String toString() {
+    return 'DealerModel(id: $id, fullName: $fullName, phone: $phone, email: $email, address: $address, provisionDisponible: $provisionDisponible, provisionBloquee: $provisionBloquee, provisonRetirable: $provisonRetirable, status: $status, rating: $rating)';
   }
 
   @override
-  int get hashCode =>
-      id.hashCode ^
-      provisionDisponible.hashCode ^
-      provisionBloquee.hashCode ^
-      status.hashCode;
+  bool operator ==(covariant DealerModel other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.fullName == fullName &&
+        other.phone == phone &&
+        other.email == email &&
+        other.address == address &&
+        other.provisionDisponible == provisionDisponible &&
+        other.provisionBloquee == provisionBloquee &&
+        other.provisonRetirable == provisonRetirable &&
+        other.status == status &&
+        other.rating == rating;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        fullName.hashCode ^
+        phone.hashCode ^
+        email.hashCode ^
+        address.hashCode ^
+        provisionDisponible.hashCode ^
+        provisionBloquee.hashCode ^
+        provisonRetirable.hashCode ^
+        status.hashCode ^
+        rating.hashCode;
+  }
 }

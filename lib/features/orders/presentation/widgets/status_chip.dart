@@ -11,7 +11,7 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color color;
     switch (status) {
-      case OrderStatus.delivered:
+      case OrderStatus.accepted:
         color = AppColors.success;
       case OrderStatus.cancelled:
         color = AppColors.error;

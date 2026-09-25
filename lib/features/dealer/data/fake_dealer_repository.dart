@@ -1,11 +1,10 @@
-import 'package:dksoft_market/core/data/test_dealers.dart';
 import 'package:dksoft_market/core/domain/dealer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeDealerRepository {
-  final List<Dealer> _dealers = kTestDealers;
+  final List<DealerModel> _dealers = [];
 
-  Dealer? getDealer(String id) {
+  DealerModel? getDealer(String id) {
     try {
       return _dealers.firstWhere((dealer) => dealer.id == id);
     } catch (e) {
@@ -13,7 +12,7 @@ class FakeDealerRepository {
     }
   }
 
-  Stream<List<Dealer>> watchAllDealers() async* {
+  Stream<List<DealerModel>> watchAllDealers() async* {
     yield _dealers;
   }
 }
@@ -22,11 +21,13 @@ final fakeDealerRepositoryProvider = Provider<FakeDealerRepository>((ref) {
   return FakeDealerRepository();
 });
 
-final dealerByIdProvider = Provider.family<Dealer?, String>((ref, id) {
+final dealerByIdProvider = Provider.family<DealerModel?, String>((ref, id) {
   return ref.watch(fakeDealerRepositoryProvider).getDealer(id);
 });
 
-final watchAllDealersProvider = StreamProvider.autoDispose<List<Dealer>>((ref) {
+final watchAllDealersProvider = StreamProvider.autoDispose<List<DealerModel>>((
+  ref,
+) {
   final repository = ref.watch(fakeDealerRepositoryProvider);
 
   return repository.watchAllDealers();

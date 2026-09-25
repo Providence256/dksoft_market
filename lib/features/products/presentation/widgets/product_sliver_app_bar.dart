@@ -98,7 +98,7 @@ class _ProductSliverAppBarState extends State<ProductSliverAppBar> {
                         context,
                       ).colorScheme.surfaceContainerHighest,
                       image: DecorationImage(
-                        image: AssetImage(widget.product.images[index]),
+                        image: NetworkImage(widget.product.images[index]),
                         fit: BoxFit.cover,
                       ),
                     ),

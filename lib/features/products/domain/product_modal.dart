@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:dksoft_market/core/domain/brands.dart';
 import 'package:dksoft_market/features/products/domain/product_attribut.dart';
 import 'package:dksoft_market/features/products/domain/product_variation.dart';
 
@@ -15,7 +14,7 @@ class ProductModal {
     required this.description,
     required this.price,
     required this.reduction,
-    this.brand,
+    this.brandId,
     required this.categoryId,
     required this.subCategoryId,
     required this.images,
@@ -31,7 +30,7 @@ class ProductModal {
   final String description;
   final double price;
   final int reduction;
-  final Brands? brand;
+  final String? brandId;
   final String categoryId;
   final String subCategoryId;
   final List<String> images;
@@ -47,7 +46,7 @@ class ProductModal {
     String? description,
     double? price,
     int? reduction,
-    Brands? brand,
+    String? brandId,
     String? categoryId,
     String? subCategoryId,
     List<String>? images,
@@ -63,7 +62,7 @@ class ProductModal {
       description: description ?? this.description,
       price: price ?? this.price,
       reduction: reduction ?? this.reduction,
-      brand: brand ?? this.brand,
+      brandId: brandId ?? this.brandId,
       categoryId: categoryId ?? this.categoryId,
       subCategoryId: subCategoryId ?? this.subCategoryId,
       images: images ?? this.images,
@@ -82,7 +81,7 @@ class ProductModal {
       'description': description,
       'price': price,
       'reduction': reduction,
-      'brand': brand?.toMap(),
+      'brandId': brandId,
       'categoryId': categoryId,
       'subCategoryId': subCategoryId,
       'images': images,
@@ -104,9 +103,7 @@ class ProductModal {
 
       reduction: (map['reduction'] as num).toInt(),
 
-      brand: map['brand'] != null
-          ? Brands.fromMap(Map<String, dynamic>.from(map['brand']))
-          : null,
+      brandId: map['brandId'] != null ? map['brandId'] as String : null,
 
       categoryId: map['categoryId'] as String,
 
@@ -152,7 +149,7 @@ class ProductModal {
         'description: $description, '
         'price: $price, '
         'reduction: $reduction, '
-        'brand: $brand, '
+        'brandId: $brandId, '
         'categoryId: $categoryId, '
         'subCategoryId: $subCategoryId, '
         'images: $images, '
@@ -173,7 +170,7 @@ class ProductModal {
         other.description == description &&
         other.price == price &&
         other.reduction == reduction &&
-        other.brand == brand &&
+        other.brandId == brandId &&
         other.categoryId == categoryId &&
         other.subCategoryId == subCategoryId &&
         listEquals(other.images, images) &&
@@ -191,7 +188,7 @@ class ProductModal {
         description.hashCode ^
         price.hashCode ^
         reduction.hashCode ^
-        brand.hashCode ^
+        brandId.hashCode ^
         categoryId.hashCode ^
         subCategoryId.hashCode ^
         Object.hashAll(images) ^

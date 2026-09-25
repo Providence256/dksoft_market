@@ -6,7 +6,7 @@ import 'package:dksoft_market/features/home/widgets/discount_widget.dart';
 import 'package:dksoft_market/features/home/widgets/home_annonce.dart';
 import 'package:dksoft_market/features/home/widgets/home_text.dart';
 import 'package:dksoft_market/features/home/widgets/pulsing_dot.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_grid.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -28,8 +28,8 @@ class HomeScreen extends ConsumerWidget {
         child: RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () async {
-            ref.invalidate(discountProductProvider);
-            ref.invalidate(watchproductsProvider);
+            ref.invalidate(productsDiscountStreamProvider);
+            ref.invalidate(productsListStreamProvider);
             // Give the indicator a beat so the refresh feels intentional.
             await Future.delayed(const Duration(milliseconds: 600));
           },

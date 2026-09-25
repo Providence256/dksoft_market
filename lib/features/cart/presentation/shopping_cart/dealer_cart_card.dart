@@ -1,7 +1,7 @@
 import 'package:dksoft_market/core/domain/dealer.dart';
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/formatters/currency_formatter.dart';
@@ -20,10 +20,13 @@ class DealerCartCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final dealer = group.dealer;
     final total = ref.watch(dealerGroupTotalProvider(group));
-    final productRepository = ref.watch(fakeProductsRepositoryProvider);
 
     final thumbnails = group.items
-        .map((item) => productRepository.getProduct(item.productId))
+        .map((item) {
+          final productValue = ref.watch(productStreamProvider(item.productId));
+          final product = productValue.value;
+          return product;
+        })
         .where((p) => p != null && p.images.isNotEmpty)
         .map((p) => p!.images.first)
         .toList();
@@ -53,7 +56,9 @@ class DealerCartCard extends ConsumerWidget {
                 radius: 20,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 child: Text(
-                  dealer.name.isNotEmpty ? dealer.name[0].toUpperCase() : '?',
+                  dealer.fullName.isNotEmpty
+                      ? dealer.fullName[0].toUpperCase()
+                      : '?',
                   style: theme.textTheme.titleMedium!.copyWith(
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
@@ -66,7 +71,7 @@ class DealerCartCard extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      dealer.name,
+                      dealer.fullName,
                       style: theme.textTheme.bodyMedium!.copyWith(),
                     ),
                     const SizedBox(height: 2),
@@ -235,7 +240,7 @@ class DealerCartCard extends ConsumerWidget {
 
   /// Estimation de livraison déterministe (placeholder tant que la
   /// géolocalisation réelle des motards n'est pas branchée — §12.1/§16).
-  String _estimatedDelivery(Dealer dealer) {
+  String _estimatedDelivery(DealerModel dealer) {
     final seed = dealer.id.hashCode.abs();
     final etaMin = 15 + (seed % 30);
     final etaMax = etaMin + 10 + (seed % 15);

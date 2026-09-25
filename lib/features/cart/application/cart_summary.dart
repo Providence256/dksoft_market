@@ -55,7 +55,7 @@ final cartLineOriginalTotalProvider = Provider.autoDispose.family<double, Item>(
 class DealerCartGroup {
   const DealerCartGroup({required this.dealer, required this.items});
 
-  final Dealer dealer;
+  final DealerModel dealer;
   final List<Item> items;
 
   int get totalQuantity =>
@@ -107,18 +107,21 @@ final cartDealerGroupsProvider = Provider<List<DealerCartGroup>>((ref) {
   final groups = itemsByDealerId.entries.map((entry) {
     final dealer =
         dealerRepository.getDealer(entry.key) ??
-        const Dealer(
+        DealerModel(
           id: 'unknown',
-          name: 'Dealer inconnu',
+          fullName: 'Dealer inconnu',
           phone: '',
-          zone: '',
+          address: null,
           provisionDisponible: 0,
+          provisionBloquee: 0.0,
+          provisonRetirable: 0.0,
+          rating: 0.0,
         );
 
     return DealerCartGroup(dealer: dealer, items: entry.value);
   }).toList();
 
-  groups.sort((a, b) => a.dealer.name.compareTo(b.dealer.name));
+  groups.sort((a, b) => a.dealer.fullName.compareTo(b.dealer.fullName));
 
   return groups;
 });

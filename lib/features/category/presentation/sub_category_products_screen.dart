@@ -1,7 +1,7 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_card.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -20,9 +20,9 @@ class SubCategoryProductsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryValue = ref.watch(categoryProvider(categoryId));
+    final categoryValue = ref.watch(categoryStreamProvider(categoryId));
     final productsValue = ref.watch(
-      productsBySubCategoryProvider(subCategoryId),
+      productsBySubCateStreamProvider(subCategoryId),
     );
 
     String? subCategoryName;

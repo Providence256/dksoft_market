@@ -1,5 +1,5 @@
 import 'package:dksoft_market/application_screen.dart';
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
 import 'package:dksoft_market/features/authentication/presentation/signup_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/cart_screen.dart';
@@ -46,7 +46,7 @@ const _protectedPaths = ['/profile', '/orders'];
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final authRepository = ref.watch(fakeAuthRepositoryProvider);
+  final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
     initialLocation: '/',
     navigatorKey: _rootNavigatorKey,

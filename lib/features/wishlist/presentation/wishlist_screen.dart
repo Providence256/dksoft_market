@@ -2,7 +2,7 @@ import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/common/responsive_center.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_card.dart';
 import 'package:dksoft_market/features/wishlist/application/wishlist_service.dart';
 import 'package:dksoft_market/features/wishlist/domain/wishlist.dart';
@@ -56,7 +56,9 @@ class WishListScreen extends ConsumerWidget {
                   itemCount: items.length,
                   itemBuilder: (_, index) {
                     final item = items[index];
-                    final product = ref.watch(watchProductProvider(item)).value;
+                    final product = ref
+                        .watch(productStreamProvider(item))
+                        .value;
 
                     return product == null
                         ? const SizedBox.shrink()

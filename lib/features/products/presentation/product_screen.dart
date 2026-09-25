@@ -2,7 +2,7 @@ import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/fade_slide_in.dart';
 import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/buy_bottom_bar.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/marchand_card.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/product_attributes.dart';
@@ -35,7 +35,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productValue = ref.watch(watchProductProvider(widget.productId));
+    final productValue = ref.watch(productStreamProvider(widget.productId));
 
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {

@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_screen.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -21,7 +21,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
-    final user = ref.read(fakeAuthRepositoryProvider).currentUser;
+    final user = ref.read(authRepositoryProvider).currentUser;
     if (user != null) {
       setState(() => _subRoute = CheckoutSubRoute.payment);
     }
@@ -37,7 +37,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(fakeAuthStateChangeProvider, (previous, next) {
+    ref.listen(authStateChangesProvider, (previous, next) {
       final isLoggedIn = next.value != null;
       if (isLoggedIn && _subRoute == CheckoutSubRoute.register) {
         setState(() => _subRoute = CheckoutSubRoute.payment);

@@ -3,9 +3,8 @@ import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/common/fade_slide_in.dart';
 import 'package:dksoft_market/common/heart_icon_container.dart';
 import 'package:dksoft_market/features/home/widgets/home_text.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/domain/product_modal.dart';
-import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/product_image_container.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -19,7 +18,7 @@ class DiscountWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final discountProductValue = ref.watch(discountProductProvider);
+    final discountProductValue = ref.watch(productsDiscountStreamProvider);
     return AsyncValueWidget(
       value: discountProductValue,
       data: (products) => products.isEmpty
@@ -66,9 +65,6 @@ class _DiscountProductCardState extends ConsumerState<DiscountProductCard> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    final pickupLocation = ref.watch(
-      merchantdefaultPickupLocationProvider(product.marchandId),
-    );
 
     return GestureDetector(
       onTapDown: (_) => _setPressed(true),
@@ -133,7 +129,7 @@ class _DiscountProductCardState extends ConsumerState<DiscountProductCard> {
                         ),
                       ),
                       Text(
-                        pickupLocation!.commune,
+                        'commune',
                         style: Theme.of(context).textTheme.labelMedium!
                             .copyWith(color: AppColors.textHintLight),
                         overflow: TextOverflow.ellipsis,

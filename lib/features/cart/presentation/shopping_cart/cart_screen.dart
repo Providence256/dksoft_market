@@ -2,7 +2,7 @@ import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/presentation/shopping_cart/dealer_cart_line_row.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -17,7 +17,6 @@ class CartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(cartLinesProvider);
-    final productRepository = ref.watch(fakeProductsRepositoryProvider);
     final subtotal = ref.watch(cartSubtotalProvider);
 
     return Scaffold(
@@ -63,9 +62,10 @@ class CartScreen extends ConsumerWidget {
                         Builder(
                           builder: (_) {
                             final item = items[i];
-                            final product = productRepository.getProduct(
-                              item.productId,
+                            final productValue = ref.watch(
+                              productStreamProvider(item.productId),
                             );
+                            final product = productValue.value;
                             if (product == null) {
                               return const SizedBox.shrink();
                             }

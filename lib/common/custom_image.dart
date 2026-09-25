@@ -7,6 +7,6 @@ class CustomImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(imageUrl, fit: BoxFit.cover);
+    return Image.network(imageUrl, fit: BoxFit.cover);
   }
 }

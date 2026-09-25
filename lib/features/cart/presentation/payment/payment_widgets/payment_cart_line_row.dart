@@ -27,7 +27,7 @@ class PaymentCartLineRow extends ConsumerWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
+            child: Image.network(
               product.images.isNotEmpty ? product.images.first : '',
               width: 50,
               height: 50,

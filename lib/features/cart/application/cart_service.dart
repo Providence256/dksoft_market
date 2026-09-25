@@ -6,9 +6,9 @@ import 'package:dksoft_market/features/cart/data/remote/remote_cart_repository.d
 import 'package:dksoft_market/features/cart/domain/cart.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
 import 'package:dksoft_market/features/cart/domain/mutable_cart.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/domain/product_variation.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/product_variation_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -146,7 +146,7 @@ final cartAvailableQuantityProvider = Provider.autoDispose.family<int, Item>((
   item,
 ) {
   final cart = ref.watch(cartProvider).value;
-  final product = ref.watch(watchProductProvider(item.productId)).value;
+  final product = ref.watch(productStreamProvider(item.productId)).value;
 
   if (cart == null || product == null) {
     return item.quantity;

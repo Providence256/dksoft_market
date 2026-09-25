@@ -1,11 +1,11 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_cart_line_row.dart';
-import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
-import 'package:dksoft_market/features/orders/data/fake_orders_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
+import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
 import 'package:dksoft_market/features/orders/presentation/widgets/status_chip.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -58,7 +58,6 @@ class _OrderDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dealer = ref.watch(dealerByIdProvider(order.dealerId));
-    final productRepository = ref.watch(fakeProductsRepositoryProvider);
     final items = order.toOrderItems();
 
     return ListView(
@@ -119,8 +118,8 @@ class _OrderDetails extends ConsumerWidget {
                 radius: 22,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 child: Text(
-                  dealer != null && dealer.name.isNotEmpty
-                      ? dealer.name[0].toUpperCase()
+                  dealer != null && dealer.fullName.isNotEmpty
+                      ? dealer.fullName[0].toUpperCase()
                       : '?',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
@@ -140,7 +139,7 @@ class _OrderDetails extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      dealer?.name ?? 'Dealer',
+                      dealer?.fullName ?? 'Dealer',
                       style: theme.textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -173,7 +172,10 @@ class _OrderDetails extends ConsumerWidget {
           Builder(
             builder: (_) {
               final item = items[i];
-              final product = productRepository.getProduct(item.productId);
+              final productValue = ref.watch(
+                productStreamProvider(item.productId),
+              );
+              final product = productValue.value;
               if (product == null) return const SizedBox.shrink();
               return PaymentCartLineRow(product: product, item: item);
             },

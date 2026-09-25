@@ -118,38 +118,6 @@ class ProductTitle extends StatelessWidget {
   }
 }
 
-/// Star rating + review count, shown just under the price.
-class _RatingBadge extends StatelessWidget {
-  const _RatingBadge({required this.rating, required this.reviewCount});
-
-  final double rating;
-  final int reviewCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ...List.generate(5, (index) {
-          final filled = index < rating.floor();
-          final half = !filled && index < rating;
-          return Icon(
-            half ? Icons.star_half : (filled ? Icons.star : Icons.star_border),
-            size: 18,
-            color: Colors.amber,
-          );
-        }),
-        const SizedBox(width: 6),
-        Text(
-          '$rating ($reviewCount reviews)',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(color: Colors.grey[600]),
-        ),
-      ],
-    );
-  }
-}
-
 /// Seller / merchant summary card — who you're buying from, their rating,
 /// and a shortcut to their storefront. Standard trust signal for a
 /// marketplace listing (vs. a single-retailer store).

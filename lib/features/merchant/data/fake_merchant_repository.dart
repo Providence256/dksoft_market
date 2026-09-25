@@ -27,7 +27,7 @@ class FakeMerchantRepository {
   PickupLocation? getDefaultPickupLocationByMerchantId(String merchantId) {
     final merchant = getMerchant(merchantId);
 
-    return merchant?.defaultPickupLocation;
+    return merchant?.pickupLocations.first;
   }
 
   PickupLocation? getPickupLocationById({

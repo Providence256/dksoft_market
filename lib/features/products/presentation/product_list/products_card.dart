@@ -58,7 +58,7 @@ class _ProductsCardState extends ConsumerState<ProductsCard> {
               borderRadius: BorderRadius.circular(Sizes.p20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(_pressed ? 0.02 : 0.06),
+                  color: Colors.black.withValues(alpha: _pressed ? 0.02 : 0.06),
                   blurRadius: _pressed ? 6 : 14,
                   offset: const Offset(0, 6),
                 ),

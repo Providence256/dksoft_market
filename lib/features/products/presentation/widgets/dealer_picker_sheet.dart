@@ -3,7 +3,7 @@ import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/core/domain/dealer.dart';
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
-import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/selected_dealer_controller.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -176,14 +176,14 @@ class _DealerOfferTile extends StatelessWidget {
     required this.eligible,
   });
 
-  final Dealer dealer;
+  final DealerModel dealer;
   final bool selected;
   final VoidCallback? onTap;
   final double price;
   final bool eligible;
 
   String get unavailableReason {
-    if (!dealer.estValide) {
+    if (!dealer.isValid) {
       return "Indisponible - ce dealer n'est pas encore valide";
     }
     return 'Indisponible - sa provision ne couvre pas cette commande';
@@ -222,8 +222,8 @@ class _DealerOfferTile extends StatelessWidget {
                     radius: 18,
                     backgroundColor: theme.colorScheme.primaryContainer,
                     child: Text(
-                      dealer.name.isNotEmpty
-                          ? dealer.name[0].toUpperCase()
+                      dealer.fullName.isNotEmpty
+                          ? dealer.fullName[0].toUpperCase()
                           : '?',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
@@ -238,7 +238,7 @@ class _DealerOfferTile extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          dealer.name,
+                          dealer.fullName,
                           style: theme.textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
@@ -261,7 +261,7 @@ class _DealerOfferTile extends StatelessWidget {
 
                             Expanded(
                               child: Text(
-                                '${dealer.commandesTraitees} commandes - ${dealer.zone}',
+                                '${dealer.address?.address}',
                                 style: theme.textTheme.bodySmall!.copyWith(
                                   color: Colors.grey[600],
                                   fontSize: 12,

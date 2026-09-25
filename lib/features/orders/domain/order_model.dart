@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dksoft_market/exceptions/app_exception.dart';
 import 'package:dksoft_market/features/cart/domain/item.dart';
 
@@ -70,6 +71,50 @@ class OrderModel {
   final double total;
 
   int get itemsCount => items.values.fold(0, (sum, qty) => sum + qty);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'userId': userId,
+      'dealerId': dealerId,
+      'items': items,
+      'orderStatus': orderStatus.name,
+      'orderDate': orderDate.toIso8601String(),
+      'total': total,
+    };
+  }
+
+  factory OrderModel.fromMap(Map<String, dynamic> map) {
+    final rawOrderDate = map['orderDate'];
+
+    final DateTime orderDate;
+    if (rawOrderDate is Timestamp) {
+      orderDate = rawOrderDate.toDate();
+    } else if (rawOrderDate is String) {
+      orderDate = DateTime.tryParse(rawOrderDate) ?? DateTime.now();
+    } else {
+      orderDate = DateTime.now();
+    }
+
+    final rawItems = map['items'];
+    final Map<String, int> items = rawItems is Map
+        ? rawItems.map(
+            (key, value) => MapEntry(key.toString(), (value as num).toInt()),
+          )
+        : {};
+
+    return OrderModel(
+      id: map['id']?.toString() ?? '',
+      userId: map['userId']?.toString() ?? '',
+      dealerId: map['dealerId']?.toString() ?? '',
+      items: items,
+      orderStatus: OrderStatusString.fromString(
+        map['orderStatus']?.toString() ?? 'pending',
+      ),
+      orderDate: orderDate,
+      total: (map['total'] as num?)?.toDouble() ?? 0,
+    );
+  }
 
   OrderModel copyWith({
     String? id,

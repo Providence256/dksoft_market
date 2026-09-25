@@ -1,6 +1,6 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
-import 'package:dksoft_market/features/orders/data/fake_orders_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
 import 'package:dksoft_market/features/orders/presentation/widgets/status_chip.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -120,7 +120,7 @@ class _OrderTracking extends ConsumerWidget {
             ),
           ],
         ),
-        if (order.orderStatus.isCancellable) ...[
+        if (order.orderStatus == OrderStatus.pending) ...[
           const SizedBox(height: Sizes.p32),
           Text(
             'Actions disponibles',
@@ -139,6 +139,28 @@ class _OrderTracking extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: Sizes.p12),
               ),
               child: const Text('Annuler la commande'),
+            ),
+          ),
+        ] else if (order.orderStatus == OrderStatus.accepted ||
+            order.orderStatus == OrderStatus.shipped) ...[
+          const SizedBox(height: Sizes.p32),
+          Text(
+            'Actions disponibles',
+            style: theme.textTheme.bodyMedium!.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: Sizes.p16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _confirmDelivery(context, ref),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.success,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: Sizes.p12),
+              ),
+              child: const Text('Livraison reçue'),
             ),
           ),
         ],
@@ -172,11 +194,47 @@ class _OrderTracking extends ConsumerWidget {
 
     if (confirmed != true) return;
 
-    final user = ref.read(fakeAuthRepositoryProvider).currentUser;
+    final user = ref.read(authRepositoryProvider).currentUser;
     if (user == null) return;
 
     await ref
-        .read(ordersRepositoryProvider)
+        .read(firestoreOrdersRepositoryProvider)
         .updateOrderStatus(user.uid, order.id, OrderStatus.cancelled);
+  }
+
+  Future<void> _confirmDelivery(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Confirmer la réception ?'),
+        content: const Text(
+          'Confirmez uniquement si vous avez bien reçu votre commande.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Retour'),
+          ),
+          FilledButton.tonal(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.success.withValues(alpha: 0.15),
+              foregroundColor: AppColors.success,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Livraison reçue'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final user = ref.read(authRepositoryProvider).currentUser;
+    if (user == null) return;
+
+    await ref
+        .read(firestoreOrdersRepositoryProvider)
+        .updateOrderStatus(user.uid, order.id, OrderStatus.delivered);
   }
 }

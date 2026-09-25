@@ -1,17 +1,20 @@
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class AuthController extends StateNotifier<AsyncValue<void>> {
   AuthController(this._authRepository) : super(const AsyncData(null));
 
-  final FakeAuthRepository _authRepository;
+  final AuthRepository _authRepository;
 
   Future<bool> signIn({required String phone, required String password}) async {
     state = const AsyncLoading();
 
     try {
-      await _authRepository.signInwithNumberAndPassword(phone, password);
+      await _authRepository.signInWithPhoneAndPassword(
+        phone: phone,
+        password: password,
+      );
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
@@ -29,9 +32,9 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
 
     try {
-      await _authRepository.createUserWithPhoneNumberAndPassword(
-        username: fullName,
-        phoneNumber: phone,
+      await _authRepository.signUpWithPhoneAndPassword(
+        fullName: fullName,
+        phone: phone,
         password: password,
         email: email,
       );
@@ -46,5 +49,5 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
 
 final authControllerProvider =
     StateNotifierProvider.autoDispose<AuthController, AsyncValue<void>>((ref) {
-      return AuthController(ref.watch(fakeAuthRepositoryProvider));
+      return AuthController(ref.watch(authRepositoryProvider));
     });

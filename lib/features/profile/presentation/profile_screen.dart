@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/profile/presentation/widgets/logout_tile.dart';
 import 'package:dksoft_market/features/profile/presentation/widgets/menu_section.dart';
 import 'package:dksoft_market/features/profile/presentation/widgets/profile_header.dart';
@@ -14,7 +14,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(fakeAuthStateChangeProvider).value;
+    final user = ref.watch(authStateChangesProvider).value;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -135,7 +135,7 @@ class ProfileScreen extends ConsumerWidget {
 
     if (confirmed != true) return;
 
-    await ref.read(fakeAuthRepositoryProvider).signOut();
+    await ref.read(authRepositoryProvider).signOut();
     if (context.mounted) context.goNamed(AppRoute.home.name);
   }
 }

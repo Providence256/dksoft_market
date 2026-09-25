@@ -1,4 +1,4 @@
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
 import 'package:dksoft_market/utils/validators/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,7 +61,7 @@ final ordersRepositoryProvider = Provider<FakeOrdersRepository>((ref) {
 
 final userOrdersProvider = StreamProvider.autoDispose<List<OrderModel>>((ref) {
   final repository = ref.watch(ordersRepositoryProvider);
-  final user = ref.watch(fakeAuthRepositoryProvider).currentUser;
+  final user = ref.watch(authRepositoryProvider).currentUser;
 
   if (user == null) return const Stream.empty();
 
@@ -73,7 +73,7 @@ final orderProvider = StreamProvider.autoDispose.family<OrderModel?, String>((
   id,
 ) {
   final repository = ref.watch(ordersRepositoryProvider);
-  final user = ref.watch(fakeAuthRepositoryProvider).currentUser!;
+  final user = ref.watch(authRepositoryProvider).currentUser!;
 
   return repository.watchUserOrder(user.uid, id);
 });

@@ -22,16 +22,6 @@ class Merchant {
   final bool verified;
   final List<PickupLocation> pickupLocations;
 
-  PickupLocation? get defaultPickupLocation {
-    if (pickupLocations.isEmpty) return null;
-
-    for (final location in pickupLocations) {
-      if (location.isDefault) return location;
-    }
-
-    return pickupLocations.first;
-  }
-
   factory Merchant.unknown(String id) => Merchant(
     id: id,
     name: 'Vendeur',

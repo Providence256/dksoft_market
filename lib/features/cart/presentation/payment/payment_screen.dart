@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
-import 'package:dksoft_market/features/authentication/data/fake_auth_repository.dart';
+import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/cart/application/cart_service.dart';
 import 'package:dksoft_market/features/cart/application/cart_summary.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/bill_row.dart';
@@ -12,10 +12,11 @@ import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_cart_line_row.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/payment_header.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_widgets/section_card.dart';
-import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
 import 'package:dksoft_market/features/orders/data/fake_orders_repository.dart';
+import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/controller/selected_dealer_controller.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
@@ -50,7 +51,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final items = ref.watch(cartLinesProvider);
-    final productRepository = ref.watch(fakeProductsRepositoryProvider);
     final selectedDealerId = ref.watch(selectedDealerProvider);
     final dealer = selectedDealerId == null
         ? null
@@ -83,13 +83,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                         InfoRow(
                           icon: HugeIcons.strokeRoundedLocation04,
                           title: 'Position actuelle',
-                          subtitle: '${dealer?.zone}',
+                          subtitle: '${dealer?.address?.commune}',
                           onEdit: () => _showComingSoon(context, 'adresse'),
                         ),
                         const SizedBox(height: Sizes.p16),
                         InfoRow(
                           icon: HugeIcons.strokeRoundedUser,
-                          title: '${dealer?.name}',
+                          title: '${dealer?.fullName}',
                           subtitle: '${dealer?.phone}',
                           onEdit: () => _showComingSoon(context, 'contact'),
                         ),
@@ -112,8 +112,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                 Builder(
                                   builder: (_) {
                                     final item = items[i];
-                                    final product = productRepository
-                                        .getProduct(item.productId);
+                                    final productValue = ref.watch(
+                                      productStreamProvider(item.productId),
+                                    );
+                                    final product = productValue.value;
 
                                     if (product == null) {
                                       return SizedBox.shrink();
@@ -164,7 +166,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     String dealerId,
     double total,
   ) async {
-    final user = ref.watch(fakeAuthRepositoryProvider).currentUser;
+    final user = ref.watch(authRepositoryProvider).currentUser;
 
     if (user == null) return;
 
@@ -187,6 +189,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
 
     await ref.read(ordersRepositoryProvider).addOrder(user.uid, order);
+    // Notifie le dealer : écrit la commande dans Firestore, lu en temps
+    // réel par l'app dealer (même projet Firebase).
+    await ref.read(firestoreOrdersRepositoryProvider).addOrder(order);
 
     final cartService = ref.read(cartServiceProvider);
     for (final item in items) {

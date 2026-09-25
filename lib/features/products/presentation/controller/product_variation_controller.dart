@@ -1,7 +1,7 @@
 import 'package:dksoft_market/features/cart/domain/item.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/domain/product_modal.dart';
 import 'package:dksoft_market/features/products/domain/product_variation.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
 import 'package:dksoft_market/helpers/pricing_calculator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -81,7 +81,7 @@ final productPriceProvider = Provider.autoDispose.family<double, Item>((
   ref,
   item,
 ) {
-  final product = ref.watch(watchProductProvider(item.productId)).value;
+  final product = ref.watch(productStreamProvider(item.productId)).value;
 
   final selectedVariation = ref
       .watch(
@@ -111,7 +111,7 @@ final productOriginalPriceProvider = Provider.autoDispose.family<double, Item>((
   ref,
   item,
 ) {
-  final product = ref.watch(watchProductProvider(item.productId)).value;
+  final product = ref.watch(productStreamProvider(item.productId)).value;
 
   if (product == null) return 0.0;
 

@@ -13,7 +13,7 @@ class CategoryFilterTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryListValue = ref.watch(categoriesListProvider);
+    final categoryListValue = ref.watch(categoriesListStreamProvider);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -77,7 +77,7 @@ class CategoryTab extends StatelessWidget {
               ],
             ),
             child: Image(
-              image: AssetImage(category.imageUrl),
+              image: NetworkImage(category.imageUrl),
               fit: BoxFit.contain,
               color: AppColors.primary,
             ),

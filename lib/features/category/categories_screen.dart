@@ -14,7 +14,7 @@ class CategoriesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesValue = ref.watch(categoriesListProvider);
+    final categoriesValue = ref.watch(categoriesListStreamProvider);
 
     return Scaffold(
       appBar: AppBar(

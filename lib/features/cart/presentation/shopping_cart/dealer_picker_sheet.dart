@@ -109,7 +109,7 @@ class _DealerTile extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      group.dealer.name,
+                      group.dealer.fullName,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

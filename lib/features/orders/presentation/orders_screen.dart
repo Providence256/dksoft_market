@@ -1,10 +1,10 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
-import 'package:dksoft_market/features/dealer/data/fake_dealer_repository.dart';
-import 'package:dksoft_market/features/orders/data/fake_orders_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
+import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
 import 'package:dksoft_market/features/orders/presentation/widgets/status_chip.dart';
-import 'package:dksoft_market/features/products/data/fake_product_repository.dart';
+import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -157,12 +157,13 @@ class _OrderTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dealer = ref.watch(dealerByIdProvider(order.dealerId));
-    final productRepository = ref.watch(fakeProductsRepositoryProvider);
     final lines = order.toOrderItems();
-    final firstProduct = lines.isEmpty
-        ? null
-        : productRepository.getProduct(lines.first.productId);
+    final firstLine = lines.isNotEmpty ? lines.first : null;
+    final productAsync = firstLine != null
+        ? ref.watch(productStreamProvider(firstLine.productId))
+        : null;
 
+    final firstProduct = productAsync!.value;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,7 +175,7 @@ class _OrderTile extends ConsumerWidget {
             vertical: Sizes.p10,
           ),
           child: Text(
-            dealer?.name ?? 'Dealer',
+            dealer?.fullName ?? 'Dealer',
             style: theme.textTheme.bodyMedium,
           ),
         ),
@@ -193,7 +194,7 @@ class _OrderTile extends ConsumerWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
+                  child: Image.network(
                     firstProduct?.images.isNotEmpty == true
                         ? firstProduct!.images.first
                         : '',

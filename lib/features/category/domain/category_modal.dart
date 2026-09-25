@@ -43,14 +43,12 @@ class CategoryModal {
 
   factory CategoryModal.fromMap(Map<String, dynamic> map) {
     return CategoryModal(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      imageUrl: map['imageUrl'] as String,
-      subCategory: List<SubCategory>.from(
-        (map['subCategory'] as List<int>).map<SubCategory>(
-          (x) => SubCategory.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      id: map['id']?.toString() ?? '',
+      name: map['name'] as String? ?? '',
+      imageUrl: map['imageUrl'] as String? ?? '',
+      subCategory: (map['subCategory'] as List<dynamic>? ?? [])
+          .map((x) => SubCategory.fromMap(Map<String, dynamic>.from(x as Map)))
+          .toList(),
     );
   }
 
