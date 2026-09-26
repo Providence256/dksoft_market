@@ -94,7 +94,7 @@ class AuthRepository {
           return 'Une erreur est survenue. Réessayez.';
       }
     }
-    return 'Une erreur est survenue. Réessayez.';
+    return 'Une erreur est survenue. Réessayez.$error';
   }
 
   Stream<AppUser?> authStateChanges() {
