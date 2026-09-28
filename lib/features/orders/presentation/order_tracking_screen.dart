@@ -1,7 +1,10 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
 import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_rating_repository.dart';
+import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
 import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
 import 'package:dksoft_market/features/orders/domain/order_model.dart';
+import 'package:dksoft_market/features/orders/presentation/widgets/rate_dealer_dialog.dart';
 import 'package:dksoft_market/features/orders/presentation/widgets/status_chip.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:dksoft_market/utils/constants/app_sizes.dart';
@@ -236,5 +239,40 @@ class _OrderTracking extends ConsumerWidget {
     await ref
         .read(firestoreOrdersRepositoryProvider)
         .updateOrderStatus(user.uid, order.id, OrderStatus.delivered);
+
+    if (!context.mounted) return;
+    await _maybePromptForRating(context, ref, userId: user.uid);
+  }
+
+  /// After a client's first completed order with a dealer, ask if they'd
+  /// like to rate them. Never asks again once a rating exists for this
+  /// dealer/client pair.
+  Future<void> _maybePromptForRating(
+    BuildContext context,
+    WidgetRef ref, {
+    required String userId,
+  }) async {
+    final ratingRepository = ref.read(dealerRatingRepositoryProvider);
+    final alreadyRated = await ratingRepository.hasRated(
+      order.dealerId,
+      userId,
+    );
+    if (alreadyRated) return;
+
+    final dealer = ref.read(dealerByIdProvider(order.dealerId));
+    if (!context.mounted) return;
+
+    final result = await showRateDealerDialog(
+      context,
+      dealerName: dealer?.fullName ?? 'ce dealer',
+    );
+    if (result == null) return;
+
+    await ratingRepository.submitRating(
+      dealerId: order.dealerId,
+      userId: userId,
+      rating: result.rating,
+      comment: result.comment,
+    );
   }
 }

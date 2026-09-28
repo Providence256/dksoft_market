@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/cart/data/local/local_cart_repository.dart';
+import 'package:dksoft_market/features/cart/data/local/sembast_cart_repository.dart';
 import 'package:dksoft_market/features/notifications/data/notifications_repository.dart';
 import 'package:dksoft_market/features/wishlist/data/local/local_wishlist_repository.dart';
 import 'package:dksoft_market/features/wishlist/data/local/sembast_wishlist_repository.dart';
@@ -37,16 +39,19 @@ void main() async {
   });
 
   final localwishListRepository = await SembastWishlistRepository.makeDefault();
+  final localRepository = await SembastCartRepository.makedefault();
+
+  final container = ProviderContainer(
+    overrides: [
+      localCartRepositoryProvider.overrideWithValue(localRepository),
+      localWishlistRepositoryProvider.overrideWithValue(
+        localwishListRepository,
+      ),
+    ],
+  );
 
   runApp(
-    ProviderScope(
-      overrides: [
-        localWishlistRepositoryProvider.overrideWithValue(
-          localwishListRepository,
-        ),
-      ],
-      child: const MainApp(),
-    ),
+    UncontrolledProviderScope(container: container, child: const MainApp()),
   );
 }
 
@@ -77,7 +82,7 @@ class MainApp extends ConsumerWidget {
 }
 
 Future<void> setupEmulators() async {
-  await FirebaseAuth.instance.useAuthEmulator('127.0.0.2', 9099);
-  FirebaseFirestore.instance.useFirestoreEmulator('127.0.0.2', 8080);
-  await FirebaseStorage.instance.useStorageEmulator('127.0.0.2', 9199);
+  await FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9099);
+  FirebaseFirestore.instance.useFirestoreEmulator('127.0.0.1', 8080);
+  await FirebaseStorage.instance.useStorageEmulator('127.0.0.1', 9199);
 }

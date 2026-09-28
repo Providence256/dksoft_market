@@ -31,6 +31,20 @@ extension MutableCart on Cart {
     return Cart(copy);
   }
 
+  Cart addItems(List<Item> itemsToAdd) {
+    final copy = Map<String, int>.from(items);
+    for (var item in itemsToAdd) {
+      final key = _generatekey(item.productId, item.variationId);
+      copy.update(
+        key,
+        (value) => item.quantity + value,
+        ifAbsent: () => item.quantity,
+      );
+    }
+
+    return Cart(copy);
+  }
+
   bool containsKey(Item item) {
     final copy = Map<String, int>.from(items);
     final key = _generatekey(item.productId, item.variationId);

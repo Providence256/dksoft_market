@@ -96,11 +96,14 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                   );
                 }
 
-                return ListView(
-                  children: [
-                    for (final order in filtered)
-                      _OrderTile(key: ValueKey(order.id), order: order),
-                  ],
+                return ListView.separated(
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, __) =>
+                      const Divider(height: 1, color: AppColors.dividerLight),
+                  itemBuilder: (context, index) {
+                    final order = filtered[index];
+                    return _OrderTile(key: ValueKey(order.id), order: order);
+                  },
                 );
               },
             ),
@@ -159,99 +162,95 @@ class _OrderTile extends ConsumerWidget {
     final dealer = ref.watch(dealerByIdProvider(order.dealerId));
     final lines = order.toOrderItems();
     final firstLine = lines.isNotEmpty ? lines.first : null;
-    final productAsync = firstLine != null
-        ? ref.watch(productStreamProvider(firstLine.productId))
+    final firstProduct = firstLine != null
+        ? ref.watch(productStreamProvider(firstLine.productId)).value
         : null;
 
-    final firstProduct = productAsync!.value;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          color: AppColors.cardLight,
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.p20,
-            vertical: Sizes.p10,
-          ),
-          child: Text(
-            dealer?.fullName ?? 'Dealer',
-            style: theme.textTheme.bodyMedium,
-          ),
+    return InkWell(
+      onTap: () => context.goNamed(
+        AppRoute.orderDetails.name,
+        pathParameters: {'orderId': order.id},
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Sizes.p20,
+          vertical: Sizes.p12,
         ),
-        InkWell(
-          onTap: () => context.goNamed(
-            AppRoute.orderDetails.name,
-            pathParameters: {'orderId': order.id},
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Sizes.p20,
-              vertical: Sizes.p12,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                firstProduct?.images.isNotEmpty == true
+                    ? firstProduct!.images.first
+                    : '',
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 56,
+                  height: 56,
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: const Icon(Icons.image_not_supported_outlined),
+                ),
+              ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    firstProduct?.images.isNotEmpty == true
-                        ? firstProduct!.images.first
-                        : '',
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 56,
-                      height: 56,
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      child: const Icon(Icons.image_not_supported_outlined),
+            const SizedBox(width: Sizes.p12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '#${order.id}',
+                          style: theme.textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (dealer != null)
+                        Text(
+                          dealer.fullName,
+                          style: theme.textTheme.labelSmall!.copyWith(
+                            color: AppColors.textSecondaryLight,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: Sizes.p4),
+                  Text(
+                    '${order.itemsCount} article(s) - '
+                    '${CurrencyFormatter.format(order.total)}',
+                    style: theme.textTheme.labelMedium!.copyWith(
+                      color: AppColors.textHintLight,
                     ),
                   ),
-                ),
-                const SizedBox(width: Sizes.p12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+                  const SizedBox(height: Sizes.p8),
+                  Row(
                     children: [
-                      Text('#${order.id}', style: theme.textTheme.bodyMedium),
-                      const SizedBox(height: Sizes.p4),
+                      StatusChip(status: order.orderStatus),
+                      const SizedBox(width: Sizes.p8),
                       Text(
-                        '${order.itemsCount} article(s) - '
-                        '${CurrencyFormatter.format(order.total)}',
-                        style: theme.textTheme.labelMedium!.copyWith(
+                        DateFormat('dd-MM-yyyy HH:mm').format(order.orderDate),
+                        style: theme.textTheme.labelSmall!.copyWith(
                           color: AppColors.textHintLight,
                         ),
                       ),
-                      const SizedBox(height: Sizes.p8),
-                      Row(
-                        children: [
-                          StatusChip(status: order.orderStatus),
-                          const SizedBox(width: Sizes.p8),
-                          Text(
-                            DateFormat(
-                              'dd-MM-yyyy HH:mm',
-                            ).format(order.orderDate),
-                            style: theme.textTheme.labelSmall!.copyWith(
-                              color: AppColors.textHintLight,
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
-                ),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.textHintLight,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textHintLight,
+            ),
+          ],
         ),
-        const Divider(height: 1, color: AppColors.dividerLight),
-      ],
+      ),
     );
   }
 }
