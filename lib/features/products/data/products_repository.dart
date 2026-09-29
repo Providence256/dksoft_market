@@ -58,9 +58,14 @@ class ProductsRepository {
   }
 
   Stream<List<ProductModal>> watchDiscountProducts() {
-    final ref = _productsRef();
+    final ref = _productsCollection();
+    // Règle Firestore : avec une inégalité (isNotEqualTo, <, >, ...) sur un
+    // champ, le PREMIER orderBy() doit porter sur ce même champ. On trie
+    // donc par 'reduction' avant 'id' — pas l'inverse.
     return ref
         .where('reduction', isNotEqualTo: 0)
+        .orderBy('reduction')
+        .orderBy('id')
         .snapshots()
         .map(
           (snapshot) =>
@@ -84,7 +89,7 @@ class ProductsRepository {
         toFirestore: (ProductModal product, options) => product.toMap(),
       );
 
-  Query<ProductModal> _productsRef() {
+  Query<ProductModal> _productsCollection() {
     return _firestore
         .collection(productsPath())
         .withConverter(
@@ -92,9 +97,10 @@ class ProductsRepository {
             return ProductModal.fromMap(doc.data()!);
           },
           toFirestore: (ProductModal product, options) => product.toMap(),
-        )
-        .orderBy('id');
+        );
   }
+
+  Query<ProductModal> _productsRef() => _productsCollection().orderBy('id');
 
   static ProductVariation? _getProductVariation(
     ProductModal product,
