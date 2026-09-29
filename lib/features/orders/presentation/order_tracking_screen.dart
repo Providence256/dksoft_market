@@ -210,14 +210,18 @@ class _OrderTracking extends ConsumerWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Confirmer la réception ?'),
-        content: const Text(
+        title: Text(
+          'Confirmer la réception ?',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        content: Text(
           'Confirmez uniquement si vous avez bien reçu votre commande.',
+          style: Theme.of(context).textTheme.labelMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Retour'),
+            child: Text('Retour', style: Theme.of(context).textTheme.bodySmall),
           ),
           FilledButton.tonal(
             style: FilledButton.styleFrom(
@@ -225,7 +229,12 @@ class _OrderTracking extends ConsumerWidget {
               foregroundColor: AppColors.success,
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Livraison reçue'),
+            child: Text(
+              'Livraison reçue',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall!.copyWith(color: AppColors.success),
+            ),
           ),
         ],
       ),

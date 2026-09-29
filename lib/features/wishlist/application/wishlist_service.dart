@@ -54,7 +54,13 @@ final wishlistServiceProvider = Provider<WishlistService>((ref) {
 });
 
 final wishlistProvider = StreamProvider<Wishlist>((ref) {
-  final wishlistService = ref.watch(wishlistServiceProvider);
+  final authState = ref.watch(authStateChangesProvider);
+  final user = authState.hasValue
+      ? authState.value
+      : ref.read(authRepositoryProvider).currentUser;
 
-  return wishlistService.watchWishlist();
+  if (user != null) {
+    return ref.watch(remoteWishlistRepositoryProvider).watchWishlist(user.uid);
+  }
+  return ref.watch(localWishlistRepositoryProvider).watchWishlist();
 });

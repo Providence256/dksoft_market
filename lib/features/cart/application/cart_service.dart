@@ -70,10 +70,17 @@ final cartServiceProvider = Provider<CartService>((ref) {
 });
 
 final cartProvider = StreamProvider<Cart>((ref) {
-  final user = ref.watch(authStateChangesProvider).value;
+  final authState = ref.watch(authStateChangesProvider);
+
+  // Pendant le chargement de l'état d'auth, `value` est null : on utilise
+  // alors currentUser pour ne pas afficher brièvement le panier local
+  // à un utilisateur déjà connecté.
+  final user = authState.hasValue
+      ? authState.value
+      : ref.read(authRepositoryProvider).currentUser;
 
   if (user != null) {
-    return ref.read(remoteCartRepositoryProvider).watchCart(user.uid);
+    return ref.watch(remoteCartRepositoryProvider).watchCart(user.uid);
   } else {
     return ref.watch(localCartRepositoryProvider).watchCart();
   }

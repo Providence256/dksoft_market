@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
+import 'package:dksoft_market/features/cart/application/cart_sync_service.dart';
 import 'package:dksoft_market/features/cart/data/local/local_cart_repository.dart';
 import 'package:dksoft_market/features/cart/data/local/sembast_cart_repository.dart';
 import 'package:dksoft_market/features/notifications/data/notifications_repository.dart';
+import 'package:dksoft_market/features/onboarding/data/onboarding_repository.dart';
+import 'package:dksoft_market/features/wishlist/application/wishlist_sync_service.dart';
 import 'package:dksoft_market/features/wishlist/data/local/local_wishlist_repository.dart';
 import 'package:dksoft_market/features/wishlist/data/local/sembast_wishlist_repository.dart';
 import 'package:dksoft_market/firebase_options.dart';
@@ -14,6 +17,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toastification/toastification.dart';
 
 @pragma('vm:entry-point')
@@ -23,7 +27,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await setupEmulators();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -40,9 +43,13 @@ void main() async {
 
   final localwishListRepository = await SembastWishlistRepository.makeDefault();
   final localRepository = await SembastCartRepository.makedefault();
+  final sharedPreferences = await SharedPreferences.getInstance();
 
   final container = ProviderContainer(
     overrides: [
+      onboardingRepositoryProvider.overrideWithValue(
+        OnboardingRepository(sharedPreferences),
+      ),
       localCartRepositoryProvider.overrideWithValue(localRepository),
       localWishlistRepositoryProvider.overrideWithValue(
         localwishListRepository,
@@ -61,6 +68,9 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
+
+    ref.watch(cartSyncServiceProvider);
+    ref.watch(wishlistSyncServiceProvider);
 
     ref.listen(authStateChangesProvider, (previous, next) {
       final user = next.value;

@@ -1,17 +1,19 @@
-import 'package:dksoft_market/features/onboarding/widgets/onboarding_widget.dart';
+import 'package:dksoft_market/features/onboarding/data/onboarding_repository.dart';
+import 'package:dksoft_market/features/onboarding/presentation/widgets/onboarding_widget.dart';
 import 'package:dksoft_market/routing/app_router.dart';
 import 'package:dksoft_market/utils/constants/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentPage = 0;
 
@@ -87,13 +89,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_currentPage < 3 - 1) {
                       _controller.nextPage(
                         duration: Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                       );
                     } else {
+                      // Mémorise que l'onboarding a été vu, puis va à l'accueil.
+                      await ref
+                          .read(onboardingRepositoryProvider)
+                          .setCompleted();
+                      if (!context.mounted) return;
                       context.goNamed(AppRoute.home.name);
                     }
                   },

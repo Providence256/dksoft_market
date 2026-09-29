@@ -46,14 +46,20 @@ class _RateDealerDialogState extends State<_RateDealerDialog> {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Comment s\'est passée votre commande ?'),
+      title: Text(
+        'Comment s\'est passée votre commande ?',
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Donnez une note à ${widget.dealerName}',
-            style: theme.textTheme.bodyMedium,
+            style: theme.textTheme.bodyMedium!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
           ),
           const SizedBox(height: Sizes.p12),
           Row(
@@ -76,8 +82,15 @@ class _RateDealerDialogState extends State<_RateDealerDialog> {
           TextField(
             controller: _commentController,
             maxLines: 3,
-            decoration: const InputDecoration(
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontWeight: FontWeight.w500,
+              color: AppColors.primary,
+            ),
+            decoration: InputDecoration(
               hintText: 'Un commentaire (facultatif)',
+              hintStyle: Theme.of(
+                context,
+              ).textTheme.labelMedium!.copyWith(color: AppColors.textHintLight),
               border: OutlineInputBorder(),
             ),
           ),
@@ -86,7 +99,12 @@ class _RateDealerDialogState extends State<_RateDealerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Plus tard'),
+          child: Text(
+            'Plus tard',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall!.copyWith(color: AppColors.primary),
+          ),
         ),
         FilledButton(
           onPressed: _rating == 0
@@ -98,7 +116,12 @@ class _RateDealerDialogState extends State<_RateDealerDialog> {
                   ),
                 ),
           style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-          child: const Text('Envoyer'),
+          child: Text(
+            'Envoyer',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall!.copyWith(color: AppColors.warningLight),
+          ),
         ),
       ],
     );

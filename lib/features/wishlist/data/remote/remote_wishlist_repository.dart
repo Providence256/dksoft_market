@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dksoft_market/features/wishlist/data/remote/remote_wishlist_repository_impl.dart';
 import 'package:dksoft_market/features/wishlist/domain/wishlist.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,5 +12,5 @@ abstract class RemoteWishlistRepository {
 final remoteWishlistRepositoryProvider = Provider<RemoteWishlistRepository>((
   ref,
 ) {
-  return RemoteWishlistRepositoryImpl();
+  return RemoteWishlistRepositoryImpl(FirebaseFirestore.instance);
 });

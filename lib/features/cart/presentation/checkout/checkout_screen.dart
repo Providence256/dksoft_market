@@ -1,5 +1,6 @@
 import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/authentication/presentation/login_screen.dart';
+import 'package:dksoft_market/features/cart/application/cart_sync_service.dart';
 import 'package:dksoft_market/features/cart/presentation/payment/payment_screen.dart';
 import 'package:dksoft_market/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +38,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(authStateChangesProvider, (previous, next) {
-      final isLoggedIn = next.value != null;
-      if (isLoggedIn && _subRoute == CheckoutSubRoute.register) {
+    ref.listen(authStateChangesProvider, (previous, next) async {
+      final user = next.value;
+      if (user != null && _subRoute == CheckoutSubRoute.register) {
+        await ref.read(cartSyncServiceProvider).syncFor(user.uid);
+        if (!mounted) return;
+
         setState(() => _subRoute = CheckoutSubRoute.payment);
 
         _controller.animateToPage(

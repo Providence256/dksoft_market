@@ -7,13 +7,15 @@ import 'package:dksoft_market/features/cart/presentation/checkout/checkout_scree
 import 'package:dksoft_market/features/category/categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_categories_screen.dart';
 import 'package:dksoft_market/features/category/presentation/sub_category_products_screen.dart';
+import 'package:dksoft_market/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:dksoft_market/features/orders/presentation/order_details_screen.dart';
 import 'package:dksoft_market/features/orders/presentation/order_tracking_screen.dart';
 import 'package:dksoft_market/features/orders/presentation/orders_screen.dart';
 import 'package:dksoft_market/features/products/presentation/widgets/dealer_picker_sheet.dart';
+import 'package:dksoft_market/features/splash/presentation/splash_screen.dart';
 import 'package:dksoft_market/features/wishlist/presentation/wishlist_screen.dart';
 import 'package:dksoft_market/features/home/home_screen.dart';
-import 'package:dksoft_market/features/onboarding/onboarding_screen.dart';
+import 'package:dksoft_market/features/onboarding/data/onboarding_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_screen.dart';
 import 'package:dksoft_market/features/profile/presentation/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoute {
+  splash,
   onboarding,
   application,
   home,
@@ -58,6 +61,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         (route) => path.startsWith(route),
       );
 
+      if (path == '/onboarding' &&
+          ref.read(onboardingRepositoryProvider).isCompleted) {
+        return '/home';
+      }
+
       if (!isLoggedIn && isProtectedRoute) {
         return Uri(
           path: '/login',
@@ -73,8 +81,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/',
+        name: AppRoute.splash.name,
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding',
         name: AppRoute.onboarding.name,
-        builder: (context, state) => OnboardingScreen(),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/login',
