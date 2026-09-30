@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
 import 'package:dksoft_market/features/category/domain/sub_category.dart';
@@ -32,6 +33,7 @@ class SubCategoriesScreen extends ConsumerWidget {
       ),
       body: AsyncValueWidget(
         value: categoryValue,
+        loading: const CategoryListSkeleton(),
         data: (category) {
           if (category == null) {
             return const Center(child: Text('Categorie introuvable'));

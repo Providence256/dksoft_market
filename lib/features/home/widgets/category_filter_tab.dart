@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
 import 'package:dksoft_market/features/category/domain/category_modal.dart';
 import 'package:dksoft_market/routing/app_router.dart';
@@ -20,6 +21,7 @@ class CategoryFilterTab extends ConsumerWidget {
       padding: EdgeInsets.symmetric(horizontal: Sizes.p16),
       child: AsyncValueWidget(
         value: categoryListValue,
+        loading: const CategoryChipsSkeleton(),
         data: (categories) => categories.isEmpty
             ? const Center(child: Text('Categories is empty'))
             : Row(

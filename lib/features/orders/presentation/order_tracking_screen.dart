@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/features/authentication/data/auth_repository.dart';
 import 'package:dksoft_market/features/dealer/data/dealer_rating_repository.dart';
 import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
@@ -35,6 +36,7 @@ class OrderTrackingScreen extends ConsumerWidget {
       ),
       body: AsyncValueWidget(
         value: orderValue,
+        loading: const DetailPageSkeleton(),
         data: (order) {
           if (order == null) {
             return const Center(child: Text('Commande introuvable.'));

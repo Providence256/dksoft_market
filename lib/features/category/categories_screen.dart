@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
 import 'package:dksoft_market/features/category/domain/category_modal.dart';
@@ -30,6 +31,7 @@ class CategoriesScreen extends ConsumerWidget {
       ),
       body: AsyncValueWidget(
         value: categoriesValue,
+        loading: const CategoryListSkeleton(),
         data: (categories) => categories.isEmpty
             ? const Center(child: Text('Aucune categorie'))
             : ListView.separated(

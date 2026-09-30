@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/fade_slide_in.dart';
 import 'package:dksoft_market/features/merchant/data/fake_merchant_repository.dart';
@@ -50,6 +51,7 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
       child: Scaffold(
         body: AsyncValueWidget(
           value: productValue,
+          loading: const ProductDetailSkeleton(),
           data: (product) {
             if (product == null) {
               return const Center(child: Text('No data found'));

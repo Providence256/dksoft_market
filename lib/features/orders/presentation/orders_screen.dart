@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/features/dealer/data/dealer_repository.dart';
 import 'package:dksoft_market/features/orders/data/firestore_orders_repository.dart';
@@ -76,6 +77,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
           Expanded(
             child: AsyncValueWidget(
               value: ordersValue,
+              loading: const OrderListSkeleton(),
               data: (orders) {
                 final filtered = orders.where((order) {
                   switch (_filter) {

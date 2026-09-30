@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_divider.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/core/domain/dealer.dart';
@@ -25,6 +26,7 @@ class ChooseDealerScreen extends ConsumerWidget {
       body: SafeArea(
         child: AsyncValueWidget(
           value: dealerValue,
+          loading: const SkeletonListView(),
           data: (dealers) => dealers.isEmpty
               ? Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),

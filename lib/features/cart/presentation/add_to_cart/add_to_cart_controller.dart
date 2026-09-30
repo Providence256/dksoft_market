@@ -24,6 +24,7 @@ class AddToCartController extends _$AddToCartController {
 
     state = const AsyncLoading<int>();
     final cartService = ref.read(cartServiceProvider);
+
     final value = await AsyncValue.guard(() => cartService.addItem(item));
 
     if (value.hasError) {

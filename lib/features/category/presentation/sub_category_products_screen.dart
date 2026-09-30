@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/features/category/data/category_repository.dart';
 import 'package:dksoft_market/features/products/data/products_repository.dart';
@@ -52,6 +53,10 @@ class SubCategoryProductsScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(Sizes.p16),
         child: AsyncValueWidget(
           value: productsValue,
+          loading: const SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
+            child: ProductGridSkeleton(),
+          ),
           data: (products) => products.isEmpty
               ? const Center(child: Text('Aucun produit dans cette categorie'))
               : SingleChildScrollView(

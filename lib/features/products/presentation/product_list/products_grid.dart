@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/features/products/data/products_repository.dart';
 import 'package:dksoft_market/features/products/presentation/product_list/products_card.dart';
@@ -13,6 +14,7 @@ class ProductsGrid extends ConsumerWidget {
     final productsListValue = ref.watch(productsListStreamProvider);
     return AsyncValueWidget(
       value: productsListValue,
+      loading: const ProductGridSkeleton(),
       data: (products) => products.isEmpty
           ? Center(child: Text('No Products Found'))
           : CustomLayoutGrid(

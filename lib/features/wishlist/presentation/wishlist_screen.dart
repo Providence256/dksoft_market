@@ -1,4 +1,5 @@
 import 'package:dksoft_market/common/async_value_widget.dart';
+import 'package:dksoft_market/common/skeleton/skeleton_layouts.dart';
 import 'package:dksoft_market/common/custom_layout_grid.dart';
 import 'package:dksoft_market/common/empty_placeholder_widget.dart';
 import 'package:dksoft_market/common/responsive_center.dart';
@@ -33,6 +34,10 @@ class WishListScreen extends ConsumerWidget {
         slivers: [
           AsyncValueSliverWidget(
             value: wishListValue,
+            loading: const Padding(
+              padding: EdgeInsets.all(Sizes.p20),
+              child: ProductGridSkeleton(),
+            ),
             data: (wishlists) {
               final items = wishlists.toItemsList();
 
